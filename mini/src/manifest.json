@@ -1,0 +1,26 @@
+{
+  "name": "掼蛋",
+  "appid": "",
+  "description": "",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "mp-weixin": {
+    "appid": "wx90faa78b64685744",
+    "setting": {
+      "urlCheck": false,
+      "minified": true
+    },
+    "usingComponents": true,
+    "permission": {},
+    "requiredPrivateInfos": [
+      "chooseLocation",
+      "getLocation"
+    ],
+    "lazyCodeLoading": "requiredComponents"
+  },
+  "uniStatistics": {
+    "enable": false
+  },
+  "vueVersion": "3"
+}
