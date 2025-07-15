@@ -1,0 +1,350 @@
+{
+  "meals": {
+    "早饭_20250615_080015": {
+      "foods": [
+        {
+          "name": "牛奶",
+          "calories": 150,
+          "protein": 8,
+          "fat": 5,
+          "carbohydrates": 12
+        },
+        {
+          "name": "全麦面包",
+          "calories": 200,
+          "protein": 9,
+          "fat": 2,
+          "carbohydrates": 38
+        },
+        {
+          "name": "鸡蛋",
+          "calories": 70,
+          "protein": 6,
+          "fat": 5,
+          "carbohydrates": 1
+        }
+      ],
+      "weight": 420,
+      "timestamp": "2025-06-15 08:00:15",
+      "meal_type": "早饭"
+    },
+    "午饭_20250615_123045": {
+      "foods": [
+        {
+          "name": "鸡胸肉",
+          "calories": 165,
+          "protein": 31,
+          "fat": 3.6,
+          "carbohydrates": 0
+        },
+        {
+          "name": "糙米饭",
+          "calories": 112,
+          "protein": 2.6,
+          "fat": 0.9,
+          "carbohydrates": 23
+        },
+        {
+          "name": "西兰花",
+          "calories": 55,
+          "protein": 5,
+          "fat": 1,
+          "carbohydrates": 11
+        },
+        {
+          "name": "胡萝卜",
+          "calories": 41,
+          "protein": 0.9,
+          "fat": 0.2,
+          "carbohydrates": 10
+        }
+      ],
+      "weight": 580,
+      "timestamp": "2025-06-15 12:30:45",
+      "meal_type": "午饭"
+    },
+    "晚饭_20250615_184030": {
+      "foods": [
+        {
+          "name": "三文鱼",
+          "calories": 206,
+          "protein": 22,
+          "fat": 13,
+          "carbohydrates": 0
+        },
+        {
+          "name": "土豆泥",
+          "calories": 150,
+          "protein": 4,
+          "fat": 5,
+          "carbohydrates": 25
+        },
+        {
+          "name": "蔬菜沙拉",
+          "calories": 80,
+          "protein": 3,
+          "fat": 4,
+          "carbohydrates": 10
+        }
+      ],
+      "weight": 450,
+      "timestamp": "2025-06-15 18:40:30",
+      "meal_type": "晚饭"
+    },
+    "夜宵_20250615_213010": {
+      "foods": [
+        {
+          "name": "酸奶",
+          "calories": 120,
+          "protein": 6,
+          "fat": 3,
+          "carbohydrates": 15
+        },
+        {
+          "name": "坚果",
+          "calories": 180,
+          "protein": 6,
+          "fat": 16,
+          "carbohydrates": 7
+        }
+      ],
+      "weight": 300,
+      "timestamp": "2025-06-15 21:30:10",
+      "meal_type": "夜宵"
+    },
+    "加餐_20250615_153020": {
+      "foods": [
+        {
+          "name": "香蕉",
+          "calories": 89,
+          "protein": 1.1,
+          "fat": 0.3,
+          "carbohydrates": 23
+        },
+        {
+          "name": "蛋白粉",
+          "calories": 110,
+          "protein": 25,
+          "fat": 1,
+          "carbohydrates": 2
+        }
+      ],
+      "weight": 210,
+      "timestamp": "2025-06-15 15:30:20",
+      "meal_type": "加餐"
+    },
+    "早饭_20250616_073550": {
+      "foods": [
+        {
+          "name": "燕麦粥",
+          "calories": 150,
+          "protein": 5,
+          "fat": 2.5,
+          "carbohydrates": 27
+        },
+        {
+          "name": "蓝莓",
+          "calories": 40,
+          "protein": 0.7,
+          "fat": 0.3,
+          "carbohydrates": 10
+        },
+        {
+          "name": "杏仁",
+          "calories": 170,
+          "protein": 6,
+          "fat": 15,
+          "carbohydrates": 6
+        }
+      ],
+      "weight": 360,
+      "timestamp": "2025-06-16 07:35:50",
+      "meal_type": "早饭"
+    },
+    "午饭_20250616_123510": {
+      "foods": [
+        {
+          "name": "牛肉",
+          "calories": 215,
+          "protein": 26,
+          "fat": 12,
+          "carbohydrates": 0
+        },
+        {
+          "name": "藜麦饭",
+          "calories": 120,
+          "protein": 4,
+          "fat": 1.5,
+          "carbohydrates": 21
+        },
+        {
+          "name": "菠菜",
+          "calories": 23,
+          "protein": 2.9,
+          "fat": 0.4,
+          "carbohydrates": 3.6
+        }
+      ],
+      "weight": 520,
+      "timestamp": "2025-06-16 12:35:10",
+      "meal_type": "午饭"
+    },
+    "晚饭_20250616_190520": {
+      "foods": [
+        {
+          "name": "虾仁",
+          "calories": 100,
+          "protein": 24,
+          "fat": 1,
+          "carbohydrates": 0
+        },
+        {
+          "name": "意大利面",
+          "calories": 160,
+          "protein": 6,
+          "fat": 1,
+          "carbohydrates": 32
+        },
+        {
+          "name": "番茄酱",
+          "calories": 30,
+          "protein": 0.7,
+          "fat": 0.2,
+          "carbohydrates": 7
+        }
+      ],
+      "weight": 410,
+      "timestamp": "2025-06-16 19:05:20",
+      "meal_type": "晚饭"
+    },
+    "加餐_20250616_160000": {
+      "foods": [
+        {
+          "name": "苹果",
+          "calories": 52,
+          "protein": 0.3,
+          "fat": 0.2,
+          "carbohydrates": 14
+        },
+        {
+          "name": "花生酱",
+          "calories": 190,
+          "protein": 8,
+          "fat": 16,
+          "carbohydrates": 6
+        }
+      ],
+      "weight": 240,
+      "timestamp": "2025-06-16 16:00:00",
+      "meal_type": "加餐"
+    },
+    "早饭_20250617_082000": {
+      "foods": [
+        {
+          "name": "煎蛋",
+          "calories": 90,
+          "protein": 6,
+          "fat": 7,
+          "carbohydrates": 1
+        },
+        {
+          "name": "培根",
+          "calories": 80,
+          "protein": 4,
+          "fat": 7,
+          "carbohydrates": 0
+        },
+        {
+          "name": "吐司",
+          "calories": 80,
+          "protein": 3,
+          "fat": 1,
+          "carbohydrates": 15
+        },
+        {
+          "name": "橙汁",
+          "calories": 110,
+          "protein": 1.7,
+          "fat": 0.3,
+          "carbohydrates": 26
+        }
+      ],
+      "weight": 480,
+      "timestamp": "2025-06-17 08:20:00",
+      "meal_type": "早饭"
+    },
+    "午饭_20250617_131530": {
+      "foods": [
+        {
+          "name": "猪肉",
+          "calories": 250,
+          "protein": 16,
+          "fat": 20,
+          "carbohydrates": 0
+        },
+        {
+          "name": "白米饭",
+          "calories": 130,
+          "protein": 2.7,
+          "fat": 0.3,
+          "carbohydrates": 28
+        },
+        {
+          "name": "青豆",
+          "calories": 70,
+          "protein": 4,
+          "fat": 0.5,
+          "carbohydrates": 13
+        }
+      ],
+      "weight": 550,
+      "timestamp": "2025-06-17 13:15:30",
+      "meal_type": "午饭"
+    },
+    "夜宵_20250617_223000": {
+      "foods": [
+        {
+          "name": "牛奶",
+          "calories": 150,
+          "protein": 8,
+          "fat": 5,
+          "carbohydrates": 12
+        },
+        {
+          "name": "燕麦饼干",
+          "calories": 90,
+          "protein": 1.5,
+          "fat": 3.5,
+          "carbohydrates": 14
+        }
+      ],
+      "weight": 240,
+      "timestamp": "2025-06-17 22:30:00",
+      "meal_type": "夜宵"
+    },
+    "晚饭_20250702_101801": {
+      "foods": [],
+      "weight": "751.7",
+      "timestamp": "2025-07-02 10:18:01",
+      "meal_type": "晚饭"
+    },
+    "晚饭_20250702_101809": {
+      "foods": [],
+      "weight": "607.3",
+      "timestamp": "2025-07-02 10:18:09",
+      "meal_type": "晚饭"
+    },
+    "Dinner_20250712_101009": {
+      "foods": [],
+      "weight": "963.2",
+      "timestamp": "2025-07-12 10:10:09",
+      "meal_type": "Dinner"
+    },
+    "Dinner_20250712_101054": {
+      "foods": [],
+      "weight": "542.8",
+      "timestamp": "2025-07-12 10:10:54",
+      "meal_type": "Dinner"
+    }
+  }
+}

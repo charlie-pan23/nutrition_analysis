@@ -1,0 +1,6 @@
+npm install
+npm install element-plus
+npm install @element-plus/icons-vue
+npm i js-audio-recorder
+npm install socket.io-client
+npm run dev

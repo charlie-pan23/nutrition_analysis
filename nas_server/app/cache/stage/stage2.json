@@ -1,0 +1,12 @@
+{
+  "stage": 2,
+  "status": "operating",
+  "time": "",
+  "data": {
+    "yolo_results": [],
+    "meals_updated": false,
+    "meals": [],
+    "workflow_status": "ready",
+    "workflow_response": ""
+  }
+}

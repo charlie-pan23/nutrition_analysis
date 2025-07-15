@@ -1,0 +1,12 @@
+{
+  "stage": 2,
+  "status": "operating",
+  "time": "",
+  "client_data": {
+    "weight_g": "0",
+    "record_update": false,
+    "record_add": {},
+    "workflow_request": "",
+    "workflow_requests": ""
+  }
+}
