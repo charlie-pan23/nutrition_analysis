@@ -268,13 +268,13 @@ function timestampToFormattedDate(timestamp) {
   width: 100vw;
   height: auto;
   min-height: 100vh;
-  background: linear-gradient(180deg, #EEC6AF 0%, #F6F6F6 100%);
+  background: linear-gradient(180deg, #03ca6d 0%, #F6F6F6 100%);
 }
 .header {
   position: fixed;
   top: 0;
   width: 100vw;
-  background: linear-gradient(180deg, #EEC6AF 0%, #F6F6F6 100%);
+  background: linear-gradient(180deg, #03ca6d 0%, #F6F6F6 100%);
 }
 
 .wrap {
@@ -298,7 +298,7 @@ function timestampToFormattedDate(timestamp) {
   height: 60rpx;
   margin: 16rpx auto;
   border-radius: 8rpx;
-  border: 1rpx solid #EEC6AF;
+  border: 1rpx solid #03ca6d;
   padding: 0 16rpx;
   box-sizing: border-box;
   text {

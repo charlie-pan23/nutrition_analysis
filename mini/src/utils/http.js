@@ -1,8 +1,5 @@
-import {login} from '@/utils/ma'
 
-const baseURL = 'https://poker.good7080.com/admin'
-// const baseURL = 'http://192.168.1.130:9886/admin'
-// const baseURL = 'http://localhost:9866/admin'
+const baseURL = 'http://172.20.10.11:5000'
 
 // 添加拦截器
 const httpInterceptor = {
@@ -17,12 +14,7 @@ const httpInterceptor = {
         // 3. 添加小程序端请求头标识
         options.header = {
             ...options.header,
-            'ma-appid': uni.getAccountInfoSync().miniProgram.appId, // 将小程序appid添加到头部
-        }
-        // 4. 添加 token 请求头标识
-        const token = uni.getStorageSync('token')
-        if (token) {
-            options.header['token'] = token
+            'appid': uni.getAccountInfoSync().miniProgram.appId, // 将小程序appid添加到头部
         }
     },
 }
@@ -43,13 +35,6 @@ const request = async (method, url, data, headers) => {
     }
 
     const resp = await uni.request(option)
-    if ((resp.data.code === 401) && retry < 2) {
-        retry++
-        await login()
-        if (!headers) headers = {}
-        headers['token'] = await uni.getStorageSync('token')
-        return await request(method, url, data, headers)
-    }
     return resp.data
 }
 

@@ -7,10 +7,10 @@ api_bp = Blueprint('api', __name__, url_prefix='/') # 或者您可以不设置ur
 
 # 导入并注册所有子蓝图
 # 注意：这里我们使用相对导入来确保正确的模块引用
-from api.user_routes import user_bp
-from api.food_routes import food_bp
-from api.meal_type_routes import meal_type_bp
-from api.meal_record_routes import meal_record_bp
+from .user_routes import user_bp
+from .food_routes import food_bp
+from .meal_type_routes import meal_type_bp
+from .meal_record_routes import meal_record_bp
 
 # 将各个子蓝图注册到父级蓝图上
 # 每个子蓝图的 url_prefix 将在其自身蓝图定义中处理

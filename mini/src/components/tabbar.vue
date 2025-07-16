@@ -7,8 +7,8 @@
                 <text :class="{ 'active' : tab === 1 }">历史</text>
             </view>
             <view class="menu m3">
-                <image src="/static/tab/home-a.png" v-if="tab === 2" />
-                <image src="/static/tab/home.png" v-else @click="checkPage(2)" />
+                <image src="/static/tab/home-a.svg" v-if="tab === 2" />
+                <image src="/static/tab/home.svg" v-else @click="checkPage(2)" />
             </view>
             <view class="menu m2">
                 <image src="/static/tab/user-a.png" v-if="tab === 3" />
@@ -61,7 +61,7 @@ const checkPage = (index) => {
       bottom: 0;
       z-index: -1;
       border-radius: 80% 80% 0 0;
-      background: #EEC6AF;
+      background: #03ca6d;
     }
     .menu {
       display: flex;

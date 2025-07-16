@@ -32,15 +32,15 @@ class MySQLService:
                 self.server_data_manager.set_db_connected(True)
                 return
 
-            logging.info(f"正在尝试连接 MySQL 数据库 (host: {self.db_config.get('host', 'N/A')}, port: {self.db_config.get('port', 'N/A')}, user: {self.db_config.get('user', 'N/A')})...")
+            logging.info(f"正在尝试连接 MySQL 数据库 ...")
             try:
                 # 尝试连接到数据库
                 conn = mysql.connector.connect(
-                    host=self.db_config.get('host'),
-                    port=self.db_config.get('port'),
-                    user=self.db_config.get('user'),
-                    password=self.db_config.get('password')
-                    # database=self.db_config.get('database') # 如果需要连接特定数据库，可以在此处添加
+                    host=self.db_config.get('localhost'),
+                    port=self.db_config.get('3306'),
+                    user=self.db_config.get('root'),
+                    password=self.db_config.get('123456'),
+                    database=self.db_config.get('nas') # 如果需要连接特定数据库，可以在此处添加
                 )
                 if conn.is_connected():
                     self._connection = conn

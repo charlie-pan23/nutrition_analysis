@@ -163,7 +163,6 @@ def get_current_user():
         return jsonify({"error": "未登录"}), 401
     return jsonify({"id": current_user["id"], "name": current_user["name"]})
 
-
 # --------users--------
 
 # --------meals--------

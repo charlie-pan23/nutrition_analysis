@@ -412,7 +412,7 @@ onMounted(() => {
   setInterval(async () => {
     console.log('获取重量')
     startWeightUpdates()
-  }, 5000)
+  }, 500)
   // socket.connect()
   fetchMeals(); // 加载餐食列表
 })

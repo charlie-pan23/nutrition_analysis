@@ -26,6 +26,7 @@
 <script setup>
 import Nav from "@/components/nav.vue";
 import Tab from "@/components/tabbar.vue";
+import {onMounted} from "vue";
 
 const sysHeight = computed(() => {
     const info = uni.getStorageSync('systemInfo')
@@ -39,6 +40,10 @@ const sysHeight = computed(() => {
     }
 })
 
+
+onMounted(()=>{
+  console.log(uni.getStorageSync('user'))
+})
 </script>
 
 <style lang="scss" scoped>
@@ -46,13 +51,13 @@ const sysHeight = computed(() => {
   width: 100vw;
   height: auto;
   min-height: 100vh;
-  background: linear-gradient(180deg, #EEC6AF 0%, #F6F6F6 100%);
+  background: linear-gradient(180deg, #03ca6d 0%, #F6F6F6 100%);
 }
 .header {
   position: fixed;
   top: 0;
   width: 100vw;
-  background: linear-gradient(180deg, #EEC6AF 0%, #F6F6F6 100%);
+  background: linear-gradient(180deg, #03ca6d 0%, #F6F6F6 100%);
 }
 
 .content {
