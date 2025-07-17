@@ -1,5 +1,4 @@
-
-const baseURL = 'http://172.20.10.11:5000'
+const baseURL = 'http://172.20.10.3:5000'
 
 // 添加拦截器
 const httpInterceptor = {

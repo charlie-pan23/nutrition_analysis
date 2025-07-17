@@ -1,7 +1,7 @@
 <script setup>
-import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
+import {onHide, onLaunch, onShow} from '@dcloudio/uni-app'
 import http from '@/utils/http'
-import { msg } from '@/utils'
+import {msg} from '@/utils'
 
 onLaunch(async () => {
   uni.getSystemInfo({
@@ -19,6 +19,23 @@ onLaunch(async () => {
     }
   })
   // await getUser()
+
+  uni.login({
+    success(res) {
+      if (res.code) {
+        console.log('code:', res.code)
+        //发起网络请求
+        http.get('http://172.20.10.3:5000/wx_login/' + res.code).then(res => {
+          if (!res.code === 200) {
+            return uni.showToast({title: '登录出错，请稍后再试', icon: 'none', duration: 2000})
+          }
+          uni.setStorageSync('user', res.user)
+        })
+      } else {
+        console.log('登录失败！' + res.errMsg)
+      }
+    }
+  })
 })
 onShow(() => {
   console.log('App Show')

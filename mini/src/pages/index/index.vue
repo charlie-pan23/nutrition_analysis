@@ -54,7 +54,7 @@
 import Nav from "@/components/nav.vue";
 import Tab from "@/components/tabbar.vue";
 
-import {ref, onMounted} from 'vue';
+import {onMounted, ref} from 'vue';
 import http from "@/utils/http";
 
 const loading = ref(false)
@@ -80,7 +80,7 @@ const foodData = ref([]);
 
 const fetchDetections = async () => {
   try {
-    const response = await http.post('http://172.20.10.3:5000/get_detections_json');
+    const response = await http.get('http://172.20.10.3:5000/get_detections_json');
     console.log(response)
     foodData.value = response
     // 如果为空，则保留原数据不变
@@ -91,19 +91,7 @@ const fetchDetections = async () => {
 };
 
 onMounted(() => {
-  uni.login({
-    success(res) {
-      if (res.code) {
-        console.log('code:', res.code)
-        //发起网络请求
-        http.get('http://172.20.10.3:6200/wx_login/' + res.code).then(res => {
-          uni.setStorageSync('user', res)
-        })
-      } else {
-        console.log('登录失败！' + res.errMsg)
-      }
-    }
-  })
+
 
   refreshVideoStream();
   setInterval(fetchDetections, 1000);
