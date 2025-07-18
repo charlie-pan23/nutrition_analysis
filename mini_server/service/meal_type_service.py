@@ -49,15 +49,15 @@ def get_id_by_name(name):
 
 def get_name_by_time(target_time_str):
     """
-    通过具体时间获取餐食类型名称
+    通过具体时间获取餐食类型名称和ID
     :param target_time_str: 时间字符串，格式为"HH:MM:SS"
-    :return: 餐食类型名称或None
+    :return: 包含餐食类型名称和ID的字典，如 {"name": "早餐", "id": 1} 或 None
     """
     try:
         # 将字符串转换为时间对象
         target_time = _parse_time(target_time_str)
         if not target_time:
-            return "加餐"
+            return {"name": "加餐", "id": 5}
 
         # 处理夜宵的特殊情况（跨天）
         meal_types = session.query(MealType).filter(MealType.id != 5).all()
@@ -66,14 +66,15 @@ def get_name_by_time(target_time_str):
             if mt.id == 4:  # 夜宵
                 # 处理跨天情况
                 if (target_time >= mt.start_time) or (target_time <= mt.end_time):
-                    return mt.name
+                    return {"name": mt.name, "id": mt.id}
             elif mt.start_time and mt.end_time and (mt.start_time <= target_time <= mt.end_time):
-                return mt.name
+                return {"name": mt.name, "id": mt.id}
 
-        return "加餐"
+        return {"name": "加餐", "id": 5}
     except Exception as e:
         logger.error(f"通过时间获取名称失败: {e}")
         return None
+
 
 
 def get_current_meal_type():

@@ -1,3 +1,7 @@
+import asyncio
+import threading
+
+import requests
 from flask import Flask, request, Response, jsonify
 import cv2
 import numpy as np
@@ -6,15 +10,20 @@ from io import BytesIO
 from PIL import Image
 import logging
 import os
+
+from flask_cors import CORS
 from ultralytics import YOLO
 from flask import Flask, jsonify
+import time
 
-
+from routes.analysis import analysis_bp
 from routes.wx import wx_bp
 from routes.meal_type import type_bp
 from routes.meal_record import record_bp
 from routes.user import user_bp
 from routes.food import food_bp
+from service.food_service import get_food_by_name
+from util.Cache import Cache
 
 app = Flask(__name__)
 app.register_blueprint(wx_bp)
@@ -22,11 +31,14 @@ app.register_blueprint(type_bp)
 app.register_blueprint(record_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(food_bp)
+app.register_blueprint(analysis_bp)
 
 MODEL_PATH = 'yolo/yolov8n_weights/weights/best.pt'
 
 model = None  # 初始化模型变量为 None
 device = 'cpu'  # 默认设备为 CPU
+CORS(app)
+cache = Cache()
 
 # 在应用程序启动时加载YOLO模型，确保只加载一次
 if not os.path.exists(MODEL_PATH):
@@ -72,6 +84,64 @@ def process_image_for_yolo(image_data):
         return None, "图像解码失败。"
 
 
+def rate_limited(interval=3):
+    """
+    装饰器，限制函数执行频率，至少间隔 interval 秒才能再次执行
+    """
+    def decorator(func):
+        last_called = [0.0]  # 使用列表以便在嵌套函数中修改
+
+        def wrapper(*args, **kwargs):
+            nonlocal last_called
+            elapsed = time.time() - last_called[0]
+            if elapsed < interval:
+                print(f"调用被限制，需等待 {interval - elapsed:.2f} 秒")
+                return None  # 或者 raise Exception("Too many requests")
+            result = func(*args, **kwargs)
+            last_called[0] = time.time()
+            return result
+        return wrapper
+    return decorator
+
+@rate_limited(interval=3)
+def my_function(res):
+    run_async_in_thread(my_async_func(res))
+
+def run_async_in_thread(coro):
+    def _run():
+        asyncio.run(coro)
+    thread = threading.Thread(target=_run)
+    thread.start()
+
+async def my_async_func(res):
+    formatted_detections = []
+    # YOLOv8的 Boxes 对象可以直接获取检测结果
+    # res[0].boxes 是一个 Boxes 对象
+    for box in res[0].boxes:
+        # xyxy 是边界框的左上角和右下角坐标 [x1, y1, x2, y2]
+        # conf 是置信度
+        # cls 是类别ID
+        x1, y1, x2, y2 = map(float, box.xyxy[0].tolist())
+        confidence = float(box.conf[0].tolist())
+        class_id = int(box.cls[0].tolist())
+
+        # 可以在此处通过 model.names 字典获取类别名称
+        class_name = model.names[class_id] if model.names else f"class_{class_id}"
+
+        formatted_detections.append({
+            "box": [x1, y1, x2, y2],
+            "confidence": confidence,
+            "class_id": class_id,
+            "class_name": class_name
+        })
+
+    logging.info(f"处理并发送JSON检测结果。检测到 {len(formatted_detections)} 个目标。")
+    cache.set('detections', formatted_detections)
+    response = requests.get('http://172.20.10.11:5000/api/weight')
+    response_data = response.json()
+    cache.set('weight', response_data['weight'])
+
+
 @app.route('/process_frame', methods=['POST'])
 def process_frame():
     """
@@ -92,6 +162,9 @@ def process_frame():
         # verbose=False 可以减少控制台输出的推理信息
         results = model.predict(img_np_rgb, verbose=False)
 
+        ## 分析图片并获取检测结果，本地缓存
+        my_function(results)
+
         # 获取带检测框的图像
         # results 是一个 Results 对象列表 (因为可以处理多张图片，这里只有一张)
         # results[0].plot() 会返回一个NumPy数组 (BGR格式)
@@ -111,75 +184,40 @@ def process_frame():
         return Response(f"服务器内部错误: {e}", status=500)
 
 
-@app.route('/get_detections_json', methods=['GET'])
+@app.route('/get_detections_json', methods=['post'])
 def get_detections_json():
-    """
-    接收图像帧，执行YOLOv8推理，并返回纯粹的检测结果JSON数据。
-    适用于微信小程序等需要结构化数据的场景。
-    """
-    if model is None:
-        logging.error("YOLOv8模型未加载，无法处理帧。")
-        return jsonify({"error": "YOLOv8模型未加载，服务器内部错误。"}), 500
+    detections = cache.get('detections')
+    weight = cache.get('weight')
 
-    img_np_rgb, error_msg = process_image_for_yolo(request.data)
+    if not detections:
+        return jsonify({"code": -1,"msg": "暂无数据"})
 
-    if img_np_rgb is None:
-        return jsonify({"error": error_msg}), 400
-
-    try:
-        # 执行YOLOv8推理
-        results = model.predict(img_np_rgb, verbose=False)
-        formatted_detections = []
-        # YOLOv8的 Boxes 对象可以直接获取检测结果
-        # results[0].boxes 是一个 Boxes 对象
-        for box in results[0].boxes:
-            # xyxy 是边界框的左上角和右下角坐标 [x1, y1, x2, y2]
-            # conf 是置信度
-            # cls 是类别ID
-            x1, y1, x2, y2 = map(float, box.xyxy[0].tolist())
-            confidence = float(box.conf[0].tolist())
-            class_id = int(box.cls[0].tolist())
-
-            # 可以在此处通过 model.names 字典获取类别名称
-            class_name = model.names[class_id] if model.names else f"class_{class_id}"
-
-            formatted_detections.append({
-                "box": [x1, y1, x2, y2],
-                "confidence": confidence,
-                "class_id": class_id,
-                "class_name": class_name
-            })
-
-        logging.info(f"处理并发送JSON检测结果。检测到 {len(formatted_detections)} 个目标。")
-
-        return jsonify({"detections": formatted_detections})
-
-    except Exception as e:
-        logging.error(f"处理图像并生成JSON时发生错误: {e}", exc_info=True)
-        return jsonify({"error": f"服务器内部错误: {e}"}), 500
-
-    # dict = [{
-    #     "name": "牛奶",
-    #     "weight": 100,
-    #     "calories": 150,
-    #     "protein": 8,
-    #     "fat": 5,
-    #     "carbohydrates": 12
-    # }, {
-    #     "name": "黄瓜",
-    #     "weight": 120,
-    #     "calories": 20,
-    #     "protein": 8,
-    #     "fat": 15,
-    #     "carbohydrates": 22
-    # }]
-    # return jsonify(dict), 200
+    class_name = detections[0]["class_name"]
+    if not class_name:
+        return jsonify({"code": -1, "msg": "识别出错"})
 
 
+
+    food = get_food_by_name(class_name)
+
+    if not food:
+        return jsonify({"code": -1, "msg": "食物不存在"})
+
+    return jsonify({"data": {
+        "food_id":food.id,
+        "name":food.name,
+        "amount":weight,
+        "calories":round(food.calories * weight/100,2),
+        "protein":round(food.protein * weight/100,2),
+        "fat":round(food.fat * weight/100,2),
+        "carbs":round(food.carbs * weight/100,2),
+        "fiber":round(food.fiber * weight/100,2),
+    },"code": 200})
 
 
 # 测试执行
 if __name__ == "__main__":
+    get_food_by_name("apple")
     logging.info("在Windows上启动Flask服务器...")
     app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
 

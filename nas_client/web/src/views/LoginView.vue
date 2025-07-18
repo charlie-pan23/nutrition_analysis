@@ -14,8 +14,8 @@
                 class="user-item"
                 @click="selectUser(user)"
             >
-              <div class="user-name">{{ user.name }}</div>
-              <div class="user-id">{{ user.id }}</div>
+              <div class="user-name">{{ user.nickname }}</div>
+              <div class="user-id">{{ user.openid }}</div>
             </div>
           </div>
         </el-scrollbar>
@@ -52,8 +52,8 @@
                 class="management-user-item"
             >
               <div class="user-info">
-                <div class="user-name">{{ user.name }}</div>
-                <div class="user-id">{{ user.id }}</div>
+                <div class="user-nickname">{{ user.nickname }}</div>
+                <div class="user-id">{{ user.openid }}</div>
               </div>
               <el-button type="danger" size="mini" @click="deleteUser(user)">删除</el-button>
             </div>
@@ -100,7 +100,7 @@ export default {
         console.error('获取用户失败:', error);
         // 后备数据
         this.users = [
-          {id: '550e8400-e29b-41d4-a716-446655440000', name: 'Admin'}
+          {openid: '550e8400-e29b-41d4-a716-446655440000', nickname: 'Admin'}
 
         ];
       }
@@ -110,13 +110,13 @@ export default {
         const response = await axios.post('/api/users', userData);
 
         this.users.push({
-          id: response.data.id,
-          name: response.data.name
+          openid: response.data.openid,
+          nickname: response.data.nickname
         });
 
         this.showForm = false;
 
-        alert(`用户 ${response.data.name} 添加成功`);
+        alert(`用户 ${response.data.nickname} 添加成功`);
       } catch (error) {
         console.error('添加用户失败:', error);
         alert(error.response?.data?.error || '添加用户失败');
@@ -143,7 +143,7 @@ export default {
 
     async selectUser(user) {
       try {
-        await axios.post('/api/login', {username: user.name});
+        await axios.post('/api/login', {username: user.nickname});
         this.$router.push('/home');
       } catch (error) {
         console.error('登录失败:', error);
@@ -151,11 +151,11 @@ export default {
       }
     },
     deleteUser: async function (user) {
-      const confirm = window.confirm(`确定要删除用户 "${user.name}" 吗？`);
+      const confirm = window.confirm(`确定要删除用户 "${user.nickname}" 吗？`);
       if (!confirm) return;
 
       try {
-        await axios.delete(`/api/users/${user.id}`);
+        await axios.delete(`/api/users/${user.openid}`);
 
         // 从列表中移除
         this.users.splice(this.users.indexOf(user), 1);

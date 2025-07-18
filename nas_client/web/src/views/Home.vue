@@ -88,7 +88,7 @@
                           热量: {{ food.calories }}kcal,
                           蛋白质: {{ food.protein }}g,
                           脂肪: {{ food.fat }}g,
-                          碳水: {{ food.carbohydrates }}g
+                          碳水: {{ food.carbs }}g
                         </li>
                       </ul>
                     </div>
@@ -117,7 +117,7 @@
               <el-button type="success" class="btn" @click="analysis">分析</el-button>
             </el-col>
             <el-col :span="4">
-              <el-button type="warning" class="btn" @click="recordMeal">记录</el-button>
+              <el-button type="warning" class="btn" @click="record">记录</el-button>
             </el-col>
             <el-col :span="5">
               <div style="background-color: #FFF; border-radius: 5px;height: 150px;" class="column">
@@ -136,66 +136,20 @@
           width="800"
           center
           :header-style="{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#606266',
-        textAlign: 'center'
-        }"
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: '#606266',
+            textAlign: 'center'
+            }"
       >
 
         <el-scrollbar height="400px">
-          <div style="font-size: 16px; font-weight: bolder; color: #606266; padding: 10px; text-align: center">
-            数据采集
+          <div style="font-size: 40rpx; font-weight: bolder;margin-bottom: 20rpx;color: #C64E0B;">医生建议：</div>
+          <div v-html="doctor()"></div>
+          <div style="font-size: 40rpx; font-weight: bolder;margin-bottom: 20rpx;color: #C64E0B;margin-top: 20rpx;">
+            菜谱推荐：
           </div>
-          <div
-              v-for="(item, index) in foodData"
-              :key="index"
-              class="report" style="flex-direction: column; align-items: flex-start; padding: 15px;"
-          >
-            <el-row>
-              <el-col :span="12">
-                <div style="display: flex; width: 100%; margin-bottom: 20px;">
-                  <span style="width: 200px; font-weight: bold;">食物：</span>
-                  <span style="width: 200px">{{ item.name }}</span>
-                </div>
-              </el-col>
-              <el-col :span="12">
-                <div style="display: flex; width: 100%; margin-bottom: 20px;">
-                  <span style="width: 200px; font-weight: bold;">重量：</span>
-                  <span style="width: 200px">{{ item.weight }}</span>
-                </div>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <div style="display: flex; width: 100%; margin-bottom: 20px;">
-                  <span style="width: 200px; font-weight: bold;">热量：</span>
-                  <span style="width: 200px">{{ item.calories }}</span>
-                </div>
-              </el-col>
-              <el-col :span="12">
-                <div style="display: flex; width: 100%; margin-bottom: 20px;">
-                  <span style="width: 200px; font-weight: bold;">蛋白质：</span>
-                  <span style="width: 200px">{{ item.protein }}</span>
-                </div>
-              </el-col>
-            </el-row>
-
-            <el-row>
-              <el-col :span="12">
-                <div style="display: flex; width: 100%; margin-bottom: 20px;">
-                  <span style="width: 200px; font-weight: bold;">脂肪：</span>
-                  <span style="width: 200px">{{ item.fat }}</span>
-                </div>
-              </el-col>
-              <el-col :span="12">
-                <div style="display: flex; width: 100%; margin-bottom: 20px;">
-                  <span style="width: 200px; font-weight: bold;">碳水化合物：</span>
-                  <span style="width: 200px">{{ item.carbohydrate }}</span>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
+          <div v-html="food()"></div>
         </el-scrollbar>
 
         <template #footer>
@@ -217,8 +171,9 @@ import axios from 'axios';
 import {ref, onMounted, onBeforeUnmount} from "vue";
 import {useRouter} from 'vue-router';
 import io from 'socket.io-client';
-import {ElMessage} from 'element-plus';
+import {ElLoading, ElMessage} from 'element-plus';
 import AudioRecorder from '../components/AudioRecorder.vue'
+import {marked} from "marked";
 
 const router = useRouter();
 const currentWeight = ref(0);
@@ -230,8 +185,19 @@ const recorder = ref(null);
 const recordTime = ref(0);
 const loading = ref(false);
 
+const foodRes = ref(undefined)
+const doctorRes = ref(undefined)
 // 检测数据 - 用于el-table展示
 const detectionData = ref([]);
+
+
+const doctor = () => {
+  return marked(foodRes.value);
+}
+const food = () => {
+  return marked(doctorRes.value);
+}
+
 
 // const socket = io('ws://localhost:7777', {
 //   reconnection: true,
@@ -252,11 +218,11 @@ const meals = ref([]);
 const selectedMeal = ref('');
 const selectedMealType = ref('');
 const mealTypeOptions = ref([
-  {label: '早饭', value: 'Breakfast'},
-  {label: '午饭', value: 'Lunch'},
-  {label: '晚饭', value: 'Dinner'},
-  {label: '夜宵', value: 'Supper'},
-  {label: '加餐', value: 'Extra'}
+  {label: '早饭', value: '1'},// breakfast
+  {label: '午饭', value: '2'},// lunch
+  {label: '晚饭', value: '3'},// dinner
+  {label: '夜宵', value: '4'},// super
+  {label: '加餐', value: '5'} // extra
 ]);
 const mealDetail = ref()
 const mealDetailData = {
@@ -316,20 +282,49 @@ const startWeightUpdates = async () => {
   //     console.error('获取重量失败:', error)
   //   }
   // }, 1000)
-
-
 }
 
-const foodData = ref([
-  {
-    name: '鸡蛋',
-    weight: '86g',
-    calories: '87kcal',
-    protein: '8.1g',
-    fat: '5.3g',
-    carbohydrate: '1.6g'
+
+const foodData = ref(null);
+
+const fetchDetections = async () => {
+  try {
+    const response = await http.post('http://172.20.10.3:5000/get_detections_json');
+    if (response.code === 200) {
+      foodData.value = response.data
+    } else {
+      foodData.value = null
+    }
+    // 如果为空，则保留原数据不变
+  } catch (error) {
+    console.error('获取检测数据失败:', error);
+    // 请求失败也保持原数据不变
   }
-])
+};
+
+const record = () => {
+  if (!foodData.value) {
+    return uni.showToast({title: '暂无记录，请确认', icon: 'none', duration: 2000})
+  }
+  const params = foodData.value
+  params['user_openid'] = getOpenId()
+  const res = http.post("http://172.20.10.3:5000/records", params)
+
+  if (res.code === 200) {
+    return uni.showToast({title: '记录成功', icon: 'success', duration: 2000})
+  }
+}
+
+// const foodData = ref([
+//   {
+//     name: '鸡蛋',
+//     weight: '86g',
+//     calories: '87kcal',
+//     protein: '8.1g',
+//     fat: '5.3g',
+//     carbohydrate: '1.6g'
+//   }
+// ])
 const handleMealTypeChange = (mealType) => {
   console.log(mealDetailData[mealType])
   mealDetail.value = mealDetailData[mealType]
@@ -363,12 +358,17 @@ const recordMeal = async () => {
     ElMessage.error('记录餐食失败');
   }
 };
-
+const meal_detail = ref('')
 // 获取餐食列表
 const fetchMeals = async () => {
+  const meal_type = mealTypeOptions.value
+  if (!selectedMeal.value) {
+    mealDetail.value = null;
+    return;
+  }// 从下拉菜单获取餐食类型
   try {
-    const response = await axios.get('/api/user-meals');
-    meals.value = response.data.meals;
+    const response = await axios.get('http://172.20.10.3:5000/meal-detail/oJ2D36yAHQ1-RsKpSEH8Sf01HZwA/${meal_type}');
+    meal_detail.value = response.data;
   } catch (error) {
     console.error('获取餐食列表失败:', error);
   }
@@ -391,8 +391,30 @@ const loadMealDetail = async () => {
 };
 
 // 分析按钮
-const analysis = () => {
-  dialogVisible.value = true;
+const analysis = async () => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '分析中,请耐心等待...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
+  try {
+    const instance = axios.create({
+      timeout: 50000 // 10秒超时
+    });
+    const res = await instance.get("http://172.20.10.3:5000/analysis")
+    console.log(res.data)
+    loading.close()
+    if (res.data.code !== 200) {
+      return ElMessage.error(res.message);
+    }
+    foodRes.value = res.data.data.food
+    doctorRes.value = res.data.data.doctor
+    dialogVisible.value = true;
+  } catch (e) {
+    console.log(e)
+    loading.close()
+    return ElMessage.error('网络异常，请稍后再试');
+  }
 };
 
 // 登出
@@ -407,12 +429,12 @@ const logout = async () => {
 
 onMounted(() => {
   refreshVideoStream()
+  setInterval(fetchDetections, 2000);
 
-
-  setInterval(async () => {
-    console.log('获取重量')
-    startWeightUpdates()
-  }, 500)
+  // setInterval(async () => {
+  //   console.log('获取重量')
+  //   startWeightUpdates()
+  // }, 5000)
   // socket.connect()
   fetchMeals(); // 加载餐食列表
 })

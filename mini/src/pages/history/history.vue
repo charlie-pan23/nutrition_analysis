@@ -118,13 +118,13 @@ const getCal = async () => {
   const openid = getOpenId()
   const res = await http.get(`/records/daily_summary/${openid}/${currentDate.value}`)
   chartData.value = getChartData(res.total_calories, res.total_carbs, res.total_protein, res.total_fat)
+  
 }
 
 
 const getDetail = async () => {
   const openid = getOpenId()
   const res = await http.get(`/records/daily/${openid}/${currentDate.value}`)
-
 
   const groupedData = res.reduce((acc, item) => {
     const key = item.meal_type_id;
@@ -136,7 +136,6 @@ const getDetail = async () => {
   }, {});
 
   console.log(JSON.stringify(groupedData))
-
   mealData.value = groupedData
 }
 

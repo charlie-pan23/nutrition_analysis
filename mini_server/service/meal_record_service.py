@@ -6,6 +6,7 @@ from models.Meal_record import MealRecord
 from models.User import User
 from service.food_service import get_food_by_id
 
+
 import logging
 
 from service.user_service import get_user_by_openid
@@ -33,29 +34,35 @@ logger = logging.getLogger(__name__)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-
 def add_meal_record(**kwargs):
     """
-    添加新的餐食记录
+    添加新的餐食记录，不计算营养成分，直接写入数据库
     :param kwargs: 包含餐食记录数据的字典
     :return: MealRecord对象或None
     """
     try:
-        # 计算实际摄入的营养素
-        food_id = kwargs.get('food_id')
-        amount = kwargs.get('amount', 100.0)
+        # 获取当前餐食类型信息
+        from service.meal_type_service import get_current_meal_type  # 避免循环导入
+        current_meal = get_current_meal_type()  # 假设返回如 {"name": "早餐", "id": 1}
 
-        if food_id and amount:
-            food = get_food_by_id(food_id)
-            if food:
-                # 根据食物营养成分和摄入量计算实际摄入量
-                ratio = amount / 100.0
-                kwargs['calories'] = food.calories * ratio
-                kwargs['protein'] = food.protein_g * ratio
-                kwargs['fat'] = food.fat_g * ratio
-                kwargs['carbs'] = food.carbohydrates_g * ratio
-                kwargs['fiber'] = food.fiber_g * ratio
+        # 设置 meal_type_id 和 notes
+        kwargs['meal_type_id'] = current_meal.get('id')
+        kwargs['notes'] = current_meal.get('name')
 
+        # 设置 meal_date 和 meal_time 为当前时间
+        from datetime import datetime, date, time
+        now = datetime.now()
+        kwargs['meal_date'] = now.date()
+        kwargs['meal_time'] = now.time()
+
+        # 设置 unit 为默认值
+        kwargs['unit'] = kwargs.get('unit', 'g')  # 若传入则用传入值，否则使用默认值
+
+        # 设置 created_at 和 updated_at 为当前时间
+        kwargs['created_at'] = now
+        kwargs['updated_at'] = now
+
+        # 创建记录
         new_record = MealRecord(**kwargs)
         session.add(new_record)
         session.commit()
@@ -275,3 +282,80 @@ def delete_meal_record(record_id):
         session.rollback()
         logger.error(f"删除餐食记录失败: {e}", exc_info=True)
         return False
+
+def get_records_by_openid_date_and_type(openid, meal_date, meal_type_id):
+    """
+    根据 openid、日期和餐型类型获取餐食记录
+    :param openid: 用户OpenID
+    :param meal_date: 用餐日期 (datetime.date对象)
+    :param meal_type_id: 餐食类型ID
+    :return: MealRecord对象列表
+    """
+    try:
+        records = session.query(MealRecord).filter(
+            MealRecord.user_openid == openid,
+            MealRecord.meal_date == meal_date,
+            MealRecord.meal_type_id == meal_type_id
+        ).order_by(MealRecord.meal_time).all()
+
+        logger.info(f"获取用户{openid}在{meal_date}的餐型{meal_type_id}记录，共{len(records)}条")
+        return records
+    except SQLAlchemyError as e:
+        logger.error(f"查询记录失败: {e}", exc_info=True)
+        return []
+
+
+def generate_meal_detail(openid, meal_type_id, meal_date=None):
+    """
+    根据 openid、日期（默认今天）和餐型类型生成餐食详情数据
+    :param openid: 用户OpenID
+    :param meal_type_id: 餐食类型ID
+    :param meal_date: 用餐日期，默认今天
+    :return: 餐食详情字典
+    """
+    if meal_date is None:
+        meal_date = date.today()
+
+    records = get_records_by_openid_date_and_type(openid, meal_date, meal_type_id)
+
+    if not records:
+        return None
+
+    meal_type_mapping = {
+        1: "早餐",
+        2: "午餐",
+        3: "晚餐",
+        4: "夜宵",
+        5: "加餐"
+    }
+
+    meal_type = meal_type_mapping.get(meal_type_id, "未知餐型")
+    formatted_time = f"{meal_date.year}年{meal_date.month:02d}月{meal_date.day:02d}日 {records[0].meal_time.strftime('%H:%M')}"
+
+    total_calories = sum(record.calories for record in records)
+    total_protein = sum(record.protein for record in records)
+    total_fat = sum(record.fat for record in records)
+    total_carbohydrates = sum(record.carbs for record in records)
+
+    foods = [
+        {
+            "name": get_food_by_id(record.food_id).name,
+            "calories": record.calories,
+            "protein": record.protein,
+            "fat": record.fat,
+            "carbohydrates": record.carbs
+        }
+        for record in records
+    ]
+
+    return {
+        "meal_type": meal_type,
+        "formatted_time": formatted_time,
+        "total": {
+            "calories": total_calories,
+            "protein": total_protein,
+            "fat": total_fat,
+            "carbohydrates": total_carbohydrates
+        },
+        "foods": foods
+    }

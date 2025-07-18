@@ -82,19 +82,6 @@ def create_user():
         return jsonify({"error": str(e)}), 400
 
 
-@app.route('/api/users/<user_id>', methods=['PUT'])
-def update_user(user_id):
-    data = request.json
-    name = data.get("name")
-    role = data.get("role")
-
-    try:
-        updated_user = user_service.update_user(user_id=user_id, name=name, role=role)
-        return jsonify(updated_user)
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-
-
 @app.route('/api/users/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
@@ -162,6 +149,7 @@ def get_current_user():
     if not current_user:
         return jsonify({"error": "未登录"}), 401
     return jsonify({"id": current_user["id"], "name": current_user["name"]})
+
 
 # --------users--------
 
@@ -424,7 +412,7 @@ def send_normal_operation_data(
 
     if meal_record_changed:
         if change_content is None:
-            print("⚠️ Warning: Meal record changed but 'changeContent' is empty. Please provide content.")
+            print("Warning: Meal record changed but 'changeContent' is empty. Please provide content.")
         payload["changeContent"] = change_content
     else:
         payload["changeContent"] = None

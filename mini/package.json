@@ -23,6 +23,7 @@
     "@yzfe/svgicon": "^1.2.2",
     "@yzfe/vue3-svgicon": "^1.0.2",
     "axios": "^1.10.0",
+    "marked": "^16.0.0",
     "uqrcodejs": "^4.0.7",
     "uview-plus": "^3.2.22",
     "vue": "^3.2.47",

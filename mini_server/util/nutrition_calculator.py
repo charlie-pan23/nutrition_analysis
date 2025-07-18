@@ -135,11 +135,11 @@ if __name__ == "__main__":
     # 计算示例 (30岁男性，180cm，75kg，中度活动，均衡饮食)
     result = NutritionCalculator.calculate_daily_goals(
         gender="male",
-        age=30,
-        height_cm=180,
-        weight_kg=75,
-        activity_level=3,
-        diet_type="balanced"
+        age=21,
+        height_cm=172,
+        weight_kg=72,
+        activity_level=4,
+        diet_type="low_carb"
     )
 
     print("每日营养目标:")

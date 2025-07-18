@@ -51,6 +51,7 @@ def get_food_by_id(food_id):
         return None
 
 def get_food_by_name(food_name):
+
     """
     根据食物名称获取单个食物。
     :param food_name: 食物的名称。
@@ -58,7 +59,7 @@ def get_food_by_name(food_name):
     """
     try:
 
-        food = session.query(Food).filter(Food.name == food_name).first()
+        food = session.query(Food).filter(Food.name == food_name.strip()).first()
         if food:
             logger.info(f"成功获取食物 '{food_name}'。")
             return food

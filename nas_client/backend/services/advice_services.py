@@ -14,7 +14,7 @@ class AudioService:
         self.USER_ID = "example-user"
 
     def speak(self, text):
-        print(f"\n🗣️ 正在朗读：{text}\n")
+        print(f"\n正在朗读：{text}\n")
         self.engine.say(text)
         self.engine.runAndWait()
 
