@@ -1,7 +1,7 @@
 # meal_type_routes.py
 from flask import Blueprint, request, jsonify
 from datetime import datetime
-from service.meal_type_service import (
+from mini_server.service.meal_type_service import (
     get_name_by_id, get_id_by_name,
     get_name_by_time, get_current_meal_type
 )

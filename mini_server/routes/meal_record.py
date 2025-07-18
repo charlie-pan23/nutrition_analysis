@@ -1,7 +1,7 @@
 # meal_record_routes.py
 from flask import Blueprint, request, jsonify
 from datetime import datetime, date
-from service.meal_record_service import (
+from mini_server.service.meal_record_service import (
     add_meal_record, get_meal_record_by_id, get_daily_meal_records,
     get_today_meal_records, get_meal_nutrition_summary, get_daily_nutrition_summary,
     update_meal_record, delete_meal_record, get_records_by_openid_date_and_type,generate_meal_detail
@@ -16,7 +16,7 @@ def create_record():
     print("================================data====")
     print(data)
     record = add_meal_record(**data)
-    return jsonify(record.to_dict()), 201 if record else 400
+    return jsonify({"code":200,"message": "添加成功", "record": record.to_dict()}), 200 if record else 400
 
 @record_bp.route('/<int:record_id>', methods=['GET'])
 def get_record(record_id):

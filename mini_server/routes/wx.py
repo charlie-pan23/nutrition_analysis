@@ -4,7 +4,7 @@ from datetime import datetime
 import requests
 from flask import jsonify
 
-from service.user_service import get_user_by_openid, update_user, get_all_users
+from mini_server.service.user_service import get_user_by_openid, update_user, get_all_users
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

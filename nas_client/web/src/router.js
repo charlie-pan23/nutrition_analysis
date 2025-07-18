@@ -14,7 +14,7 @@ const routes = [
     },
     {path: '/', name: 'standby', component: StandbyView},
     {path: '/login', name: 'login', component: LoginView},
-    {path: '/camera', name: 'camera', component: Camera},
+    // {path: '/camera', name: 'camera', component: Camera},
 ]
 
 const router = createRouter({

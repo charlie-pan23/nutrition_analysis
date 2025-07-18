@@ -1,6 +1,6 @@
 # user_routes.py
 from flask import Blueprint, request, jsonify
-from service.user_service import (
+from mini_server.service.user_service import (
     add_user, delete_user, update_user,
     get_user_by_openid, get_all_users
 )

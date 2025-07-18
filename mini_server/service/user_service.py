@@ -1,11 +1,11 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
-from base import engine
+from mini_server.base import engine
 
 import logging
 
-from models.User import User
+from mini_server.models.User import User
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

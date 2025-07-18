@@ -161,13 +161,14 @@ const analysis = async () => {
   }
 
 }
-const record = () => {
+const record = async () => {
   if (!foodData.value) {
     return uni.showToast({title: '暂无记录，请确认', icon: 'none', duration: 2000})
   }
   const params = foodData.value
+
   params['user_openid'] = getOpenId()
-  const res = http.post("/records", params)
+  const res = await http.post("/records", params)
 
   if (res.code === 200) {
     return uni.showToast({title: '记录成功', icon: 'success', duration: 2000})

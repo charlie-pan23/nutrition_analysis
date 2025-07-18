@@ -211,7 +211,7 @@ def get_detections_json():
         "protein":round(food.protein * weight/100,2),
         "fat":round(food.fat * weight/100,2),
         "carbs":round(food.carbs * weight/100,2),
-        "fiber":round(food.fiber * weight/100,2),
+        "fiber":round(food.fiber * weight/100,2)
     },"code": 200})
 
 

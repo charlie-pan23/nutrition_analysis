@@ -1,15 +1,15 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
-from base import engine
-from models.Meal_record import MealRecord
-from models.User import User
-from service.food_service import get_food_by_id
+from mini_server.base import engine
+from mini_server.models.Meal_record import MealRecord
+from mini_server.models.User import User
+from mini_server.service.food_service import get_food_by_id
 
 
 import logging
 
-from service.user_service import get_user_by_openid
+from mini_server.service.user_service import get_user_by_openid
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -22,9 +22,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func, or_
 from sqlalchemy.orm import sessionmaker
 
-from base import engine
-from models.Meal_record import MealRecord
-from service.food_service import get_food_by_id
+from mini_server.base import engine
+from mini_server.models.Meal_record import MealRecord
+from mini_server.service.food_service import get_food_by_id
 
 import logging
 

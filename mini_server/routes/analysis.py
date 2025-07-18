@@ -3,8 +3,8 @@ from datetime import datetime
 
 from flask import Blueprint, request, jsonify
 
-from util.api import upload_json_file, run_workflow_and_extract
-from vo.user_daily_info import PersonalInfo, FoodItem, DailyGoals, DailyIntake, DailyInfo, ComplexEncoder
+from mini_server.util.api import upload_json_file, run_workflow_and_extract
+from mini_server.vo.user_daily_info import PersonalInfo, FoodItem, DailyGoals, DailyIntake, DailyInfo, ComplexEncoder
 
 analysis_bp = Blueprint('analysis', __name__, url_prefix='/analysis')
 

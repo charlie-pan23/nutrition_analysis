@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
-from base import engine
-from models.Meal_type import MealType
+from mini_server.base import engine
+from mini_server.models.Meal_type import MealType
 from datetime import datetime, time, timedelta
 import logging
 

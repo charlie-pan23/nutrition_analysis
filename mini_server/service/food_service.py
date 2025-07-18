@@ -1,8 +1,8 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
-from base import engine
-from models.Food import Food
+from mini_server.base import engine
+from mini_server.models.Food import Food
 
 import logging
 

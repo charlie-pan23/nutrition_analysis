@@ -1,6 +1,6 @@
 # food_routes.py
 from flask import Blueprint, request, jsonify
-from service.food_service import add_food, get_food_by_id, get_food_by_name, get_all_foods, update_food, delete_food
+from mini_server.service.food_service import add_food, get_food_by_id, get_food_by_name, get_all_foods, update_food, delete_food
 
 food_bp = Blueprint('food', __name__, url_prefix='/foods')
 

@@ -367,7 +367,7 @@ const fetchMeals = async () => {
     return;
   }// 从下拉菜单获取餐食类型
   try {
-    const response = await axios.get('http://172.20.10.3:5000/meal-detail/oJ2D36yAHQ1-RsKpSEH8Sf01HZwA/${meal_type}');
+    const response = await axios.get('http://172.20.10.3:5000/records/meal-detail/oJ2D36yAHQ1-RsKpSEH8Sf01HZwA/${meal_type}');
     meal_detail.value = response.data;
   } catch (error) {
     console.error('获取餐食列表失败:', error);

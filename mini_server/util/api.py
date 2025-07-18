@@ -2,7 +2,7 @@ import io
 import requests
 import json
 
-from vo.user_daily_info import ComplexEncoder
+from mini_server.vo.user_daily_info import ComplexEncoder
 
 
 def upload_json_file(info, user):
