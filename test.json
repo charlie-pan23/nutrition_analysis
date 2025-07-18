@@ -1,0 +1,37 @@
+{
+  "code": 200,
+  "data": {
+    "foods": [
+      {
+        "calories": "2.00",
+        "carbohydrates": "5.00",
+        "fat": "4.00",
+        "name": "Tomato",
+        "protein": "3.00"
+      },
+      {
+        "calories": "2.00",
+        "carbohydrates": "5.00",
+        "fat": "4.00",
+        "name": "Tomato",
+        "protein": "3.00"
+      },
+      {
+        "calories": "2.00",
+        "carbohydrates": "5.00",
+        "fat": "4.00",
+        "name": "Tomato",
+        "protein": "3.00"
+      }
+    ],
+    "formatted_time": "2025\u5e7407\u670818\u65e5 10:12",
+    "meal_type": "\u5348\u9910",
+    "total": {
+      "calories": "6.00",
+      "carbohydrates": "15.00",
+      "fat": "12.00",
+      "protein": "9.00"
+    }
+  },
+  "message": "\u83b7\u53d6\u9910\u98df\u8be6\u60c5\u6210\u529f"
+}

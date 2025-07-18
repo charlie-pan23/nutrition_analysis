@@ -72,7 +72,7 @@ def get_meal_detail_route(openid, meal_type_id):
             return jsonify({
                 "code": 400,
                 "message": "日期格式错误，请使用 YYYY-MM-DD"
-            }), 400
+            })
 
     meal_detail = generate_meal_detail(openid, meal_type_id, meal_date)
 
@@ -81,7 +81,7 @@ def get_meal_detail_route(openid, meal_type_id):
             "code": 404,
             "message": "未找到相关餐食记录",
             "data": None
-        }), 404
+        })
 
     return jsonify({
         "code": 200,

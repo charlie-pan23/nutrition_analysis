@@ -71,8 +71,9 @@
                   <div v-if="mealDetail">
                     <!-- 显示餐食详情 -->
                     <div class="meal-detail">
-                      <h3 style="margin-top: 0; margin-bottom: 10px;">{{ mealDetail.meal_type }} -
-                        {{ mealDetail.formatted_time }}</h3>
+                      <h4 style="margin-top: 0; margin-bottom: 10px;">
+                        {{ mealDetail.formatted_time }}
+                      </h4>
                       <el-descriptions border :column="1">
                         <el-descriptions-item label="总热量">{{ mealDetail.total.calories }} kcal</el-descriptions-item>
                         <el-descriptions-item label="蛋白质">{{ mealDetail.total.protein }} g</el-descriptions-item>
@@ -80,7 +81,6 @@
                         <el-descriptions-item label="碳水化合物">{{ mealDetail.total.carbohydrates }} g
                         </el-descriptions-item>
                       </el-descriptions>
-
                       <h4 style="margin-top: 5px; margin-bottom: 5px;">包含食物：</h4>
                       <ul class="food-list">
                         <li v-for="(food, index) in mealDetail.foods" :key="index">
@@ -92,6 +92,9 @@
                         </li>
                       </ul>
                     </div>
+                  </div>
+                  <div v-else class="empty-result">
+                    <el-empty description="暂无数据"/>
                   </div>
                 </el-scrollbar>
               </el-card>
@@ -215,8 +218,8 @@ const food = () => {
 // });
 
 const meals = ref([]);
-const selectedMeal = ref('');
-const selectedMealType = ref('');
+const selectedMeal = ref(null);
+const selectedMealType = ref(null);
 const mealTypeOptions = ref([
   {label: '早饭', value: '1'},// breakfast
   {label: '午饭', value: '2'},// lunch
@@ -225,41 +228,7 @@ const mealTypeOptions = ref([
   {label: '加餐', value: '5'} // extra
 ]);
 const mealDetail = ref()
-const mealDetailData = {
-  'Dinner': {
-    meal_type: '晚餐',
-    formatted_time: '2025年06月15日 18:40',
-    total: {
-      calories: 436,
-      protein: 29,
-      fat: 22,
-      carbohydrates: 35
-    },
-    foods: [
-      {
-        name: "三文鱼",
-        calories: 206,
-        protein: 22,
-        fat: 13,
-        carbohydrates: 0
-      },
-      {
-        name: "土豆泥",
-        calories: 150,
-        protein: 4,
-        fat: 5,
-        carbohydrates: 25
-      },
-      {
-        name: "蔬菜沙拉",
-        calories: 80,
-        protein: 3,
-        fat: 4,
-        carbohydrates: 10
-      }
-    ]
-  }
-};
+
 const videoUrl = ref("")
 const refreshVideoStream = () => {
   const timestamp = new Date().getTime()
@@ -289,7 +258,7 @@ const foodData = ref(null);
 
 const fetchDetections = async () => {
   try {
-    const response = await http.post('http://172.20.10.3:5000/get_detections_json');
+    const response = await axios.post('http://172.20.10.3:5000/get_detections_json');
     if (response.code === 200) {
       foodData.value = response.data
     } else {
@@ -325,70 +294,32 @@ const record = () => {
 //     carbohydrate: '1.6g'
 //   }
 // ])
-const handleMealTypeChange = (mealType) => {
-  console.log(mealDetailData[mealType])
-  mealDetail.value = mealDetailData[mealType]
+const handleMealTypeChange = async (mealType) => {
+  console.log(mealType)
+  await fetchMeals()
 }
-// 记录餐食
-const recordMeal = async () => {
-  if (!selectedMealType.value) {
-    ElMessage.warning('请选择餐食类型');
-    return;
-  }
-
-  try {
-    // 将检测到的食物列表发送到后端
-    const detectedFoods = detectionData.value.map(item => ({
-      name: item.label,
-      count: item.count
-    }))
-
-    const response = await axios.post('/api/record-meal', {
-      weight: currentWeight.value,
-      mealType: selectedMealType.value,
-      foods: detectedFoods  // 发送检测到的食物列表
-    });
-
-    ElMessage.success('餐食记录成功');
-    await fetchMeals();
-    selectedMeal.value = response.data.meal_name;
-    await loadMealDetail();
-  } catch (error) {
-    console.error('记录餐食失败:', error);
-    ElMessage.error('记录餐食失败');
-  }
-};
-const meal_detail = ref('')
 // 获取餐食列表
 const fetchMeals = async () => {
-  const meal_type = mealTypeOptions.value
-  if (!selectedMeal.value) {
+  if (!selectedMealType.value) {
     mealDetail.value = null;
-    return;
+    return ElMessage.warning('请选择餐食类型');
+
   }// 从下拉菜单获取餐食类型
   try {
-    const response = await axios.get('http://172.20.10.3:5000/records/meal-detail/oJ2D36yAHQ1-RsKpSEH8Sf01HZwA/${meal_type}');
-    meal_detail.value = response.data;
+    const res = await axios.get(`http://172.20.10.3:5000/records/meal-detail/oJ2D36yAHQ1-RsKpSEH8Sf01HZwA/${selectedMealType.value}`);
+    console.log(res)
+    if (res.data.code !== 200) {
+      mealDetail.value = null;
+      return ElMessage.warning(res.data.message);
+    }
+    console.log(res.data.data)
+    mealDetail.value = res.data.data;
   } catch (error) {
     console.error('获取餐食列表失败:', error);
   }
 };
 
-// 加载餐食详情
-const loadMealDetail = async () => {
-  if (!selectedMeal.value) {
-    mealDetail.value = null;
-    return;
-  }
 
-  try {
-    const response = await axios.get(`/api/meal-detail/${selectedMeal.value}`);
-    mealDetail.value = response.data;
-  } catch (error) {
-    console.error('获取餐食详情失败:', error);
-    mealDetail.value = null;
-  }
-};
 
 // 分析按钮
 const analysis = async () => {
@@ -429,14 +360,14 @@ const logout = async () => {
 
 onMounted(() => {
   refreshVideoStream()
-  setInterval(fetchDetections, 2000);
+  // setInterval(fetchDetections, 2000);
 
   // setInterval(async () => {
   //   console.log('获取重量')
   //   startWeightUpdates()
   // }, 5000)
   // socket.connect()
-  fetchMeals(); // 加载餐食列表
+  // fetchMeals(); // 加载餐食列表
 })
 
 onBeforeUnmount(() => {
