@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Numeric, Time, Date, Text
 from sqlalchemy.orm import relationship, backref
-from base import Base
+from mini_server.base import Base
 
 class MealRecord(Base):
     __tablename__ = 'meal_records'

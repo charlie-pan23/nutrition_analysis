@@ -23,8 +23,6 @@ from routes.meal_record import record_bp
 from routes.user import user_bp
 from routes.food import food_bp
 from service.food_service import get_food_by_name
-from util.Cache import Cache
-
 app = Flask(__name__)
 app.register_blueprint(wx_bp)
 app.register_blueprint(type_bp)
@@ -38,7 +36,7 @@ MODEL_PATH = 'yolo/yolov8n_weights/weights/best.pt'
 model = None  # 初始化模型变量为 None
 device = 'cpu'  # 默认设备为 CPU
 CORS(app)
-cache = Cache()
+from mini_server.cache_manager import global_cache as cache  # ✅ 使用全局 cache
 
 # 在应用程序启动时加载YOLO模型，确保只加载一次
 if not os.path.exists(MODEL_PATH):
@@ -169,8 +167,9 @@ def process_frame():
         # results 是一个 Results 对象列表 (因为可以处理多张图片，这里只有一张)
         # results[0].plot() 会返回一个NumPy数组 (BGR格式)
         img_result_bgr = results[0].plot()
+        img_result_rgb_for_frontend = cv2.cvtColor(img_result_bgr, cv2.COLOR_BGR2RGB)
+        ret, img_encoded_bytes = cv2.imencode('.jpg', img_result_rgb_for_frontend, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
 
-        ret, img_encoded_bytes = cv2.imencode('.jpg', img_result_bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
         if not ret:
             logging.error("无法将处理后的帧编码为JPEG。")
             return Response("服务器处理图像时出错。", status=500)
@@ -189,19 +188,24 @@ def get_detections_json():
     detections = cache.get('detections')
     weight = cache.get('weight')
 
+    if not weight:
+        return jsonify({"code": 400,"msg": "称重数据不存在"})
+
+    print("==========================")
+    print(detections)
     if not detections:
-        return jsonify({"code": -1,"msg": "暂无数据"})
+        return jsonify({"code": 400,"msg": "暂无数据"})
 
     class_name = detections[0]["class_name"]
     if not class_name:
-        return jsonify({"code": -1, "msg": "识别出错"})
+        return jsonify({"code": 400, "msg": "识别出错"})
 
 
 
     food = get_food_by_name(class_name)
 
     if not food:
-        return jsonify({"code": -1, "msg": "食物不存在"})
+        return jsonify({"code": 400, "msg": "食物不存在"})
 
     return jsonify({"data": {
         "food_id":food.id,

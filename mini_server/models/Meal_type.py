@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Time
 from sqlalchemy.orm import declarative_base
-from base import Base
+from mini_server.base import Base
 
 
 class MealType(Base):

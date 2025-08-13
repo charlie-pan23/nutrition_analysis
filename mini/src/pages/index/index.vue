@@ -12,25 +12,52 @@
         <view class="title">实时分析</view>
         <!-- 表格容器 -->
         <view class="table-container">
-          <!-- 滚动区域 + 数据行 -->
-          <scroll-view v-if="foodData" scroll-x="true" @scroll="scroll">
-            <view class="table-header">
+          <view v-if="foodData">
+            <view class="table-row">
               <view class="table-cell">食物名称</view>
-              <view class="table-cell">重量/g</view>
-              <view class="table-cell">热量/kcal</view>
-              <view class="table-cell">蛋白质/g</view>
-              <view class="table-cell">脂肪/g</view>
-              <view class="table-cell">碳水化合物/g</view>
+              <view class="table-cell">{{ foodData.name }}</view>
             </view>
             <view class="table-row">
-              <view class="table-cell">{{ foodData.name }}</view>
+              <view class="table-cell">重量/g</view>
               <view class="table-cell">{{ foodData.amount }}</view>
+            </view>
+            <view class="table-row">
+              <view class="table-cell">热量/kca</view>
               <view class="table-cell">{{ foodData.calories }}</view>
+            </view>
+            <view class="table-row">
+              <view class="table-cell">蛋白质/g</view>
               <view class="table-cell">{{ foodData.protein }}</view>
+            </view>
+            <view class="table-row">
+              <view class="table-cell">脂肪/g</view>
               <view class="table-cell">{{ foodData.fat }}</view>
+            </view>
+            <view class="table-row">
+              <view class="table-cell">碳水化合物/g</view>
               <view class="table-cell">{{ foodData.carbs }}</view>
             </view>
-          </scroll-view>
+          </view>
+          <!-- 滚动区域 + 数据行 -->
+          <!--          <scroll-view v-if="foodData" scroll-x="true" @scroll="scroll">-->
+          <!--            <view class="table-header">-->
+          <!--              <view class="table-cell">食物名称</view>-->
+          <!--              <view class="table-cell">重量/g</view>-->
+          <!--              <view class="table-cell">热量/kcal</view>-->
+          <!--              <view class="table-cell">蛋白质/g</view>-->
+          <!--              <view class="table-cell">脂肪/g</view>-->
+          <!--              <view class="table-cell">碳水化合物/g</view>-->
+          <!--            </view>-->
+
+          <!--            <view class="table-row">-->
+          <!--              <view class="table-cell">{{ foodData.name }}</view>-->
+          <!--              <view class="table-cell">{{ foodData.amount }}</view>-->
+          <!--              <view class="table-cell">{{ foodData.calories }}</view>-->
+          <!--              <view class="table-cell">{{ foodData.protein }}</view>-->
+          <!--              <view class="table-cell">{{ foodData.fat }}</view>-->
+          <!--              <view class="table-cell">{{ foodData.carbs }}</view>-->
+          <!--            </view>-->
+          <!--          </scroll-view>-->
           <!-- 空状态 -->
           <view v-else class="empty-result">
             暂无检测结果
@@ -145,13 +172,13 @@ const fetchDetections = async () => {
 };
 
 const analysis = async () => {
-  await uni.showLoading({title: '分析中,请耐心等待…'})
   try {
+    await uni.showLoading({title: '分析中,请耐心等待…'})
     const res = await http.get("/analysis")
-    uni.hideLoading()
     if (res.code !== 200) {
-      return uni.showToast({title: res.message, icon: 'none', duration: 2000})
+      return uni.showToast({title: res.msg, icon: 'none', duration: 2000})
     }
+    uni.hideLoading()
     foodRes.value = res.data.food
     doctorRes.value = res.data.doctor
     openModal()
@@ -229,7 +256,7 @@ onMounted(() => {
 }
 
 .c2 {
-  height: 25vh;
+  height: 32vh;
 }
 
 .control {
@@ -311,6 +338,12 @@ onMounted(() => {
   border-bottom: 1rpx solid #eee;
   font-size: 24rpx;
   color: #666;
+
+  &:first-child {
+    font-weight: bold;
+    color: #333;
+    background-color: #f9f9f9;
+  }
 }
 
 .table-header {
