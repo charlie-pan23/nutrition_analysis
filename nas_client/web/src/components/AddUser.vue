@@ -6,21 +6,21 @@
       width="800px"
       @close="$emit('cancel')"
   >
-    <el-form label-width="140px" :model="formData">
-      <el-form-item label="用户名:">
+    <el-form label-width="140px" :model="formData" size="large">
+      <el-form-item label="用户名">
         <el-input size="large" v-model="formData.username" placeholder="输入用户名"></el-input>
       </el-form-item>
       <el-form-item label="年龄:">
-        <el-slider v-model="formData.age"/>
+        <my-slider v-model="formData.age"/>
       </el-form-item>
-      <el-form-item label="身高 (cm):">
-        <el-slider v-model="formData.height"/>
+      <el-form-item label="身高 (cm)">
+          <my-slider v-model="formData.height" :max="heightMax" :min="heightMin" :show-tooltip="false"/>
       </el-form-item>
-      <el-form-item label="体重 (kg): ">
-        <el-slider v-model="formData.weight"/>
+      <el-form-item label="体重 (kg)">
+        <my-slider v-model="formData.weight"/>
       </el-form-item>
-      <el-form-item label="慢性病（可多选）:">
-        <div class="tag-selector">
+      <el-form-item label="慢性病（可多选）">
+        <div class="tag-selector start">
             <span
                 v-for="condition in conditionOptions"
                 :key="condition.value"
@@ -32,18 +32,8 @@
             </span>
         </div>
       </el-form-item>
-    </el-form>
-    <div class="add-user-form">
-      <!-- 慢性病 -->
-      <div class="form-group">
-        <label></label>
-
-      </div>
-
-      <!-- 过敏原 -->
-      <div class="form-group">
-        <label>过敏原（可多选）:</label>
-        <div class="tag-selector">
+      <el-form-item label="过敏原（可多选）">
+        <div class="tag-selector start">
         <span
             v-for="avoidance in allergiesOptions"
             :key="avoidance.value"
@@ -54,11 +44,8 @@
           {{ avoidance.label }}
         </span>
         </div>
-      </div>
-
-      <!-- 偏好 -->
-      <div class="form-group">
-        <label>饮食偏好（可多选）:</label>
+      </el-form-item>
+      <el-form-item label="饮食偏好（可多选）">
         <div class="tag-selector">
         <span
             v-for="preference in preferenceOptions"
@@ -70,19 +57,20 @@
           {{ preference.label }}
         </span>
         </div>
-      </div>
-
-      <!-- 提交按钮 -->
-      <div class="form-actions">
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
         <el-button type="success" @click="$emit('cancel')">取消</el-button>
         <el-button type="primary" @click="submit">添加</el-button>
       </div>
-    </div>
+    </template>
   </el-dialog>
 </template>
 
 <script setup>
-import {reactive, computed} from 'vue'
+import {reactive, computed, ref} from 'vue'
+import MySlider from "./MySlider.vue";
 
 // 表单数据
 const formData = reactive({
@@ -168,9 +156,25 @@ const submit = () => {
     preferences: [...formData.preferences]
   })
 }
+
+const heightMin = ref(100)
+const heightMax = ref(200)
+const style = computed(() => {
+  const length = heightMax.value - heightMin.value,
+      progress = formData.height - heightMin.value,
+      left = (progress / length) * 100;
+  return {
+    paddingLeft: `${left}%`,
+  };
+})
+
 </script>
 
 <style scoped>
+
+:deep(.el-form-item--large .el-form-item__content){
+  line-height: 22px !important;
+}
 .add-user-form {
   padding: 10px;
 }
@@ -230,12 +234,11 @@ input[type="text"] {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.5rem;
   width: 100%;
 }
 
 .tag {
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 1rem;
   background-color: #f0f0f0;
   border-radius: 20px;
   cursor: pointer;
@@ -261,39 +264,47 @@ input[type="text"] {
   gap: 10px;
 }
 
-button {
-  padding: 0.7rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+.dialog-footer {
 
-button:first-child {
-  background-color: #f5f5f5;
-  color: #000;
-}
+  button {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-button:first-child:hover {
-  background-color: #e0e0e0;
-}
+  button:first-child {
+    background-color: #f5f5f5;
+    color: #000;
+  }
 
-button:last-child {
-  background-color: #4CAF50;
-  color: white;
-}
+  button:first-child:hover {
+    background-color: #e0e0e0;
+  }
 
-button:last-child:hover {
-  background-color: #388e3c;
-}
+  button:last-child {
+    background-color: #4CAF50;
+    color: white;
+  }
 
+  button:last-child:hover {
+    background-color: #388e3c;
+  }
+
+}
 
 :deep(.el-form-item__content) {
   line-height: 1.5;
 }
 
+:deep(.el-form-item__label) {
+  font-weight: bold;
+}
+
 /* 全局样式 */
+
 body, html {
   /* 禁用文本选择 */
   -webkit-user-select: none;
