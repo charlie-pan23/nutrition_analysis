@@ -24,7 +24,8 @@
                 <el-scrollbar :wrap-style="{ overflowX: 'auto' }" style="width: 100%">
                   <!-- 添加动画效果 -->
                   <el-table
-                      :data="foodData"
+                      v-if="foodData"
+                      :data="[foodData]"
                       height="400px"
                       stripe
                       :show-header="true"
@@ -35,14 +36,14 @@
                         <span style="font-weight: bold">{{ row.name }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="weight" label="重量" align="center" width="80px/"/>
+                    <el-table-column prop="amount" label="重量" align="center" width="80px/"/>
                     <el-table-column prop="calories" label="热量" align="center" width="90px"/>
                     <el-table-column prop="protein" label="蛋白质(g)" align="center" width="100px"/>
                     <el-table-column prop="fat" label="脂肪(g)" align="center" width="100px"/>
-                    <el-table-column prop="carbohydrate" label="碳水化合物(g)" align="center" width="120px"/>
+                    <el-table-column prop="carbs" label="碳水化合物(g)" align="center" width="120px"/>
                   </el-table>
 
-                  <div v-if="detectionData.length === 0" class="empty-result">
+                  <div v-else class="empty-result">
                     <el-empty description="暂无检测结果"/>
                   </div>
                 </el-scrollbar>
@@ -177,6 +178,7 @@ import io from 'socket.io-client';
 import {ElLoading, ElMessage} from 'element-plus';
 import AudioRecorder from '../components/AudioRecorder.vue'
 import {marked} from "marked";
+import http from "../utils/request.js";
 
 const router = useRouter();
 const currentWeight = ref(0);
@@ -259,8 +261,8 @@ const foodData = ref(null);
 const fetchDetections = async () => {
   try {
     const response = await axios.post('http://172.20.10.3:5000/get_detections_json');
-    if (response.code === 200) {
-      foodData.value = response.data
+    if (response.data.code === 200) {
+      foodData.value = response.data.data
     } else {
       foodData.value = null
     }
@@ -271,29 +273,21 @@ const fetchDetections = async () => {
   }
 };
 
-const record = () => {
+const record = async () => {
   if (!foodData.value) {
-    return uni.showToast({title: '暂无记录，请确认', icon: 'none', duration: 2000})
+    return ElMessage.warning('暂无记录，请确认');
   }
   const params = foodData.value
-  params['user_openid'] = getOpenId()
-  const res = http.post("http://172.20.10.3:5000/records", params)
+
+  params['user_openid'] = "oJ2D36yAHQ1-RsKpSEH8Sf01HZwA"
+  const res = await http.post("http://172.20.10.3:5000/records", params)
 
   if (res.code === 200) {
-    return uni.showToast({title: '记录成功', icon: 'success', duration: 2000})
+    return ElMessage.success('记录成功');
   }
 }
 
-// const foodData = ref([
-//   {
-//     name: '鸡蛋',
-//     weight: '86g',
-//     calories: '87kcal',
-//     protein: '8.1g',
-//     fat: '5.3g',
-//     carbohydrate: '1.6g'
-//   }
-// ])
+
 const handleMealTypeChange = async (mealType) => {
   console.log(mealType)
   await fetchMeals()
@@ -318,7 +312,6 @@ const fetchMeals = async () => {
     console.error('获取餐食列表失败:', error);
   }
 };
-
 
 
 // 分析按钮
@@ -360,12 +353,12 @@ const logout = async () => {
 
 onMounted(() => {
   refreshVideoStream()
-  // setInterval(fetchDetections, 2000);
+  setInterval(fetchDetections, 2000);
 
-  // setInterval(async () => {
-  //   console.log('获取重量')
-  //   startWeightUpdates()
-  // }, 5000)
+  setInterval(async () => {
+    console.log('获取重量')
+    await startWeightUpdates()
+  }, 5000)
   // socket.connect()
   // fetchMeals(); // 加载餐食列表
 })

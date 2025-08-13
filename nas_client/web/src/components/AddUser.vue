@@ -6,85 +6,49 @@
       width="800px"
       @close="$emit('cancel')"
   >
+    <el-form label-width="140px" :model="formData">
+      <el-form-item label="用户名:">
+        <el-input size="large" v-model="formData.username" placeholder="输入用户名"></el-input>
+      </el-form-item>
+      <el-form-item label="年龄:">
+        <el-slider v-model="formData.age"/>
+      </el-form-item>
+      <el-form-item label="身高 (cm):">
+        <el-slider v-model="formData.height"/>
+      </el-form-item>
+      <el-form-item label="体重 (kg): ">
+        <el-slider v-model="formData.weight"/>
+      </el-form-item>
+      <el-form-item label="慢性病（可多选）:">
+        <div class="tag-selector">
+            <span
+                v-for="condition in conditionOptions"
+                :key="condition.value"
+                class="tag"
+                :class="{ 'selected': formData.conditions.includes(condition.value) }"
+                @click="toggleCondition(condition.value)"
+            >
+              {{ condition.label }}
+            </span>
+        </div>
+      </el-form-item>
+    </el-form>
     <div class="add-user-form">
-      <h2>添加新用户</h2>
-
-      <!-- 用户名 -->
-      <div class="form-group">
-        <label for="newUserName">用户名:</label>
-        <input
-            type="text"
-            id="newUserName"
-            v-model="formData.username"
-            required
-            placeholder="输入用户名"
-        />
-      </div>
-
-      <!-- 年龄 -->
-      <div class="form-group">
-        <label>年龄: {{ formData.age }}</label>
-        <input
-            type="range"
-            v-model="formData.age"
-            min="0"
-            max="120"
-            class="custom-slider"
-        />
-        <div class="slider-value">{{ formData.age }}</div>
-      </div>
-
-      <!-- 身高 -->
-      <div class="form-group">
-        <label>身高 (cm): {{ formData.height }}</label>
-        <input
-            type="range"
-            v-model="formData.height"
-            min="50"
-            max="250"
-            class="custom-slider"
-        />
-        <div class="slider-value">{{ formData.height }}</div>
-      </div>
-
-      <!-- 体重 -->
-      <div class="form-group">
-        <label>体重 (kg): {{ formData.weight }}</label>
-        <input
-            type="range"
-            v-model="formData.weight"
-            min="20"
-            max="300"
-            class="custom-slider"
-        />
-        <div class="slider-value">{{ formData.weight }}</div>
-      </div>
-
       <!-- 慢性病 -->
       <div class="form-group">
-        <label>慢性病（可多选）:</label>
-        <div class="tag-selector">
-        <span
-            v-for="condition in conditionOptions"
-            :key="condition.value"
-            class="tag"
-            :class="{ 'selected': formData.conditions.includes(condition.value) }"
-            @click="toggleCondition(condition.value)"
-        >
-          {{ condition.label }}
-        </span>
-        </div>
+        <label></label>
+
       </div>
 
-      <!-- 忌口 -->
+      <!-- 过敏原 -->
       <div class="form-group">
-        <label>忌口（可多选）:</label>
+        <label>过敏原（可多选）:</label>
         <div class="tag-selector">
         <span
-            v-for="avoidance in avoidanceOptions"
+            v-for="avoidance in allergiesOptions"
             :key="avoidance.value"
             class="tag"
-            :class="{ 'selected': formData.avoidances.includes(avoidance.value) }"
+            :class="{ 'selected': formData.allergies.includes(avoidance.value) }"
             @click="toggleAvoidance(avoidance.value)"
         >
           {{ avoidance.label }}
@@ -118,7 +82,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import {reactive, computed} from 'vue'
 
 // 表单数据
 const formData = reactive({
@@ -127,35 +91,37 @@ const formData = reactive({
   height: 170,
   weight: 60,
   conditions: [],
-  avoidances: [],
+  allergies: [],
   preferences: []
 })
 
 // 选项配置
 const conditionOptions = [
-  { label: '高血压', value: 'hypertension' },
-  { label: '糖尿病', value: 'diabetes' },
-  { label: '心脏病', value: 'heart_disease' },
-  { label: '脂肪肝', value: 'fatty_liver' },
-  { label: '高血脂', value: 'hyperlipidemia' }
+  {label: '高血压', value: 'hypertension'},
+  {label: '糖尿病', value: 'diabetes'},
+  {label: '心脏病', value: 'heart_disease'},
+  {label: '高血脂', value: 'hyperlipidemia'},
+  {label: '高尿酸', value: 'high_uric_acid'}
 ]
 
-const avoidanceOptions = [
-  { label: '海鲜', value: 'seafood' },
-  { label: '牛奶', value: 'milk' },
-  { label: '鸡蛋', value: 'eggs' },
-  { label: '花生', value: 'peanuts' },
-  { label: '辛辣', value: 'spicy' },
-  { label: '生冷', value: 'cold' }
+const allergiesOptions = [
+  {label: '海鲜', value: 'seafood'},
+  {label: '牛奶', value: 'milk'},
+  {label: '鸡蛋', value: 'eggs'},
+  {label: '花生', value: 'peanuts'},
+  {label: '坚果', value: 'nuts'},
+  {label: '大豆', value: 'soybeans'}
 ]
 
 const preferenceOptions = [
-  { label: '蔬菜', value: 'vegetables' },
-  { label: '肉类', value: 'meat' },
-  { label: '水果', value: 'fruits' },
-  { label: '鱼类', value: 'fish' },
-  { label: '主食', value: 'grains' },
-  { label: '素食', value: 'vegetarian' }
+  {label: '蔬菜', value: 'vegetables'},
+  {label: '肉类', value: 'meat'},
+  {label: '水果', value: 'fruits'},
+  {label: '鱼类', value: 'fish'},
+  {label: '主食', value: 'grains'},
+  {label: '素食', value: 'vegetarian'},
+  {label: '辣口', value: 'spicy'},
+  {label: '咸口', value: 'salty'}
 ]
 
 const props = defineProps({
@@ -185,7 +151,7 @@ const toggleSelection = (array, value) => {
 }
 
 const toggleCondition = (value) => toggleSelection(formData.conditions, value)
-const toggleAvoidance = (value) => toggleSelection(formData.avoidances, value)
+const toggleAvoidance = (value) => toggleSelection(formData.allergies, value)
 const togglePreference = (value) => toggleSelection(formData.preferences, value)
 
 // 提交表单
@@ -198,7 +164,7 @@ const submit = () => {
   emit('submit', {
     ...formData,
     conditions: [...formData.conditions],
-    avoidances: [...formData.avoidances],
+    allergies: [...formData.allergies],
     preferences: [...formData.preferences]
   })
 }
@@ -321,4 +287,25 @@ button:last-child {
 button:last-child:hover {
   background-color: #388e3c;
 }
+
+
+:deep(.el-form-item__content) {
+  line-height: 1.5;
+}
+
+/* 全局样式 */
+body, html {
+  /* 禁用文本选择 */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  /* 禁用长按菜单 */
+  -webkit-touch-callout: none;
+
+  /* 优化滚动性能 */
+  overscroll-behavior-y: contain; /* 防止滚动到顶部或底部时，触发整个页面的“橡皮筋”效果 */
+}
+
 </style>

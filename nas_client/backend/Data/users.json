@@ -30,7 +30,7 @@
       "height": 175,
       "weight": 70,
       "conditions": ["hypertension", "hyperlipidemia"],
-      "avoidances": ["spicy", "alcohol"],
+      "allergies": ["spicy", "alcohol"],
       "preferences": ["vegetables", "fish"],
       "createdAt": "2023-01-15T08:30:00Z"
     },
@@ -41,34 +41,9 @@
       "height": 165,
       "weight": 55,
       "conditions": ["diabetes"],
-      "avoidances": ["sweets", "fatty_foods"],
+      "allergies": ["sweets", "fatty_foods"],
       "preferences": ["vegetarian", "fruits"],
       "createdAt": "2023-02-20T14:15:00Z"
     }
-  ],
-  "metadata": {
-    "conditionOptions": [
-      {"label": "高血压", "value": "hypertension"},
-      {"label": "糖尿病", "value": "diabetes"},
-      {"label": "心脏病", "value": "heart_disease"},
-      {"label": "脂肪肝", "value": "fatty_liver"},
-      {"label": "高血脂", "value": "hyperlipidemia"}
-    ],
-    "avoidanceOptions": [
-      {"label": "海鲜", "value": "seafood"},
-      {"label": "牛奶", "value": "milk"},
-      {"label": "鸡蛋", "value": "eggs"},
-      {"label": "花生", "value": "peanuts"},
-      {"label": "辛辣", "value": "spicy"},
-      {"label": "生冷", "value": "cold"}
-    ],
-    "preferenceOptions": [
-      {"label": "蔬菜", "value": "vegetables"},
-      {"label": "肉类", "value": "meat"},
-      {"label": "水果", "value": "fruits"},
-      {"label": "鱼类", "value": "fish"},
-      {"label": "主食", "value": "grains"},
-      {"label": "素食", "value": "vegetarian"}
-    ]
-  }
+  ]
 }

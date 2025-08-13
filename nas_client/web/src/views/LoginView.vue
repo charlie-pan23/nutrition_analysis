@@ -14,8 +14,8 @@
                 class="user-item"
                 @click="selectUser(user)"
             >
-              <div class="user-name">{{ user.nickname }}</div>
-              <div class="user-id">{{ user.openid }}</div>
+              <div class="user-name">{{ user.name }}</div>
+              <div class="user-id">{{ user.id }}</div>
             </div>
           </div>
         </el-scrollbar>
@@ -52,8 +52,8 @@
                 class="management-user-item"
             >
               <div class="user-info">
-                <div class="user-nickname">{{ user.nickname }}</div>
-                <div class="user-id">{{ user.openid }}</div>
+                <div class="user-name">{{ user.name }}</div>
+                <div class="user-id">{{ user.id }}</div>
               </div>
               <el-button type="danger" size="mini" @click="deleteUser(user)">删除</el-button>
             </div>
@@ -83,7 +83,7 @@ export default {
     await this.fetchUsers();
 
     // // 添加触屏滑动支持
-    this.setupTouchScrolling();
+    // this.setupTouchScrolling();
   },
   computed: {
     nonAdminUsers() {
@@ -100,7 +100,7 @@ export default {
         console.error('获取用户失败:', error);
         // 后备数据
         this.users = [
-          {openid: '550e8400-e29b-41d4-a716-446655440000', nickname: 'Admin'}
+          {id: '550e8400-e29b-41d4-a716-446655440000', name: 'Admin'}
 
         ];
       }
@@ -110,40 +110,40 @@ export default {
         const response = await axios.post('/api/users', userData);
 
         this.users.push({
-          openid: response.data.openid,
-          nickname: response.data.nickname
+          id: response.data.id,
+          name: response.data.name
         });
 
         this.showForm = false;
 
-        alert(`用户 ${response.data.nickname} 添加成功`);
+        alert(`用户 ${response.data.name} 添加成功`);
       } catch (error) {
         console.error('添加用户失败:', error);
         alert(error.response?.data?.error || '添加用户失败');
       }
     },
 
-    setupTouchScrolling() {
-      const userList = this.$refs.userList;
-      if (!userList) return;
-
-      let startY = 0;
-      let scrollTop = 0;
-
-      userList.addEventListener('touchstart', (e) => {
-        startY = e.touches[0].clientY;
-        scrollTop = userList.scrollTop;
-      });
-
-      userList.addEventListener('touchmove', (e) => {
-        const deltaY = e.touches[0].clientY - startY;
-        userList.scrollTop = scrollTop - deltaY;
-      });
-    },
+    // setupTouchScrolling() {
+    //   const userList = this.$refs.userList;
+    //   if (!userList) return;
+    //
+    //   let startY = 0;
+    //   let scrollTop = 0;
+    //
+    //   userList.addEventListener('touchstart', (e) => {
+    //     startY = e.touches[0].clientY;
+    //     scrollTop = userList.scrollTop;
+    //   });
+    //
+    //   userList.addEventListener('touchmove', (e) => {
+    //     const deltaY = e.touches[0].clientY - startY;
+    //     userList.scrollTop = scrollTop - deltaY;
+    //   });
+    // },
 
     async selectUser(user) {
       try {
-        await axios.post('/api/login', {username: user.nickname});
+        await axios.post('/api/login', {username: user.name});
         this.$router.push('/home');
       } catch (error) {
         console.error('登录失败:', error);
@@ -151,11 +151,11 @@ export default {
       }
     },
     deleteUser: async function (user) {
-      const confirm = window.confirm(`确定要删除用户 "${user.nickname}" 吗？`);
+      const confirm = window.confirm(`确定要删除用户 "${user.name}" 吗？`);
       if (!confirm) return;
 
       try {
-        await axios.delete(`/api/users/${user.openid}`);
+        await axios.delete(`/api/users/${user.id}`);
 
         // 从列表中移除
         this.users.splice(this.users.indexOf(user), 1);
@@ -226,7 +226,7 @@ h1 {
   padding: 1.5rem;
   background-color: #f5f5f5;
   border-radius: 12px;
-  cursor: pointer;
+  /*cursor: pointer;*/
   transition: all 0.3s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -268,7 +268,7 @@ h1 {
   border: none;
   border-radius: 8px;
   font-size: 1.5rem;
-  cursor: pointer;
+  /*cursor: pointer;*/
   transition: all 0.3s;
 
   width: 80%;
@@ -354,7 +354,7 @@ h1 {
   border: none;
   border-radius: 8px;
   font-size: 1rem;
-  cursor: pointer;
+  /*cursor: pointer;*/
   transition: background-color 0.3s;
 }
 
@@ -381,7 +381,7 @@ h1 {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
-
+/*
 @media (max-width: 768px) {
   .user-item {
     padding: 1.2rem;
@@ -399,4 +399,21 @@ h1 {
     flex-direction: column;
   }
 }
+*/
+/* 全局样式 */
+body, html {
+  /* 禁用文本选择 */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  /* 禁用长按菜单 */
+  -webkit-touch-callout: none;
+
+  /* 优化滚动性能 */
+  overscroll-behavior-y: contain; /* 防止滚动到顶部或底部时，触发整个页面的“橡皮筋”效果 */
+}
+
+
 </style>
