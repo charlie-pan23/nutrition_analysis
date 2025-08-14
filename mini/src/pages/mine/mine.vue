@@ -29,9 +29,12 @@
           <view class="item">
             <text>身高</text>
             <view class="start">
-              <text style="margin-right: 20rpx">{{ user.height }}厘米</text>
+              <picker @change="bindPickerChange" :value="index" :range="heightList" style="margin-right: 10rpx">
+                <view class="uni-input">{{user.height}}</view>
+              </picker>厘米
               <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
             </view>
+
           </view>
           <view class="item">
             <text>偏好</text>
@@ -40,21 +43,30 @@
               <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
             </view>
           </view>
-          <view class="item">
+          <view class="item" @click="showActionSheet('diseases')">
             <text>慢性病</text>
             <view class="start">
               <text style="margin-right: 20rpx">{{ user.diseases }}</text>
               <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
             </view>
           </view>
-          <view class="item">
+          <view class="item" @click="showActionSheet('allergies')">
             <text>过敏源</text>
             <view class="start">
               <text style="margin-right: 20rpx">{{ user.allergies }}</text>
               <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
             </view>
           </view>
-
+          <view class="item" @click="onMultiplePick">
+            <text>过敏源</text>
+            <view class="start">
+              <text style="margin-right: 20rpx">{{ user.allergies }}</text>
+              <multiple-pick ref="allergiesPickRef" :list="allergiesPickList" disabled-key="disabled"
+                             disabled-value="1" :defaults="[]" @confirm="onMultiplePickConfirm"
+                             :max="2" max-message="已超出最大选项"></multiple-pick>
+              <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
+            </view>
+          </view>
         </view>
       </view>
     </view>
@@ -67,6 +79,8 @@ import Nav from "@/components/nav.vue";
 import Tab from "@/components/tabbar.vue";
 import {onMounted} from "vue";
 import {getUser} from "@/utils/store";
+import http from "@/utils/http";
+import MultiplePick from "@/components/multiple-pick.vue";
 
 const sysHeight = computed(() => {
   const info = uni.getStorageSync('systemInfo')
@@ -79,11 +93,65 @@ const sysHeight = computed(() => {
     paddingHeight: 'padding-top: ' + (statusBarHeight + navigationBarHeight + 20) + 'rpx'
   }
 })
-const user = ref({})
+const user = ref({
+  height: 170,
+  age: 18,
+  gender: '男',
+  preferences: 'Empty',
+  allergies: 'Empty',
+  diseases: 'Empty'
+})
+
+const allergiesPickList= ref(['海鲜', '牛奶', '鸡蛋','花生','坚果','大豆'])
 
 onMounted(() => {
   user.value = getUser()
 })
+const allergiesPickRef= ref();
+const onMultiplePick = ()  =>{
+  allergiesPickRef.value.show();
+}
+
+const onMultiplePickConfirm = (selectedList)  =>{
+  console.log(selectedList);
+
+  allergiesPickRef.value.close();
+}
+
+
+
+const showActionSheet = (type) => {
+
+  let itemList = []
+
+  switch (type) {
+    case 'allergies':
+      itemList = ['海鲜', '牛奶', '鸡蛋','花生','坚果','大豆']
+      break;
+    case 'diseases':
+      itemList = ['高血压', '糖尿病', '心脏病','高血脂','高尿酸']
+      break;
+    case 'height':
+      itemList = heightList
+      break;
+    default:
+      itemList = ['选项A', '选项B', '选项C']
+      break;
+  }
+
+  uni.showActionSheet({
+    itemList: itemList,
+    success: function (res) {
+      console.log('用户选择了第' + res.tapIndex + '个选项');
+      console.log(itemList[res.tapIndex])
+      user.value[type] = itemList[res.tapIndex]
+
+    },
+    fail: function (res) {
+      console.log(res.errMsg);
+    }
+  });
+}
 </script>
 
 <style lang="scss" scoped>
