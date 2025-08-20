@@ -1,0 +1,18 @@
+[
+  {
+    "food": [
+      {
+        "class": "apple",
+        "weight_estimate": "150g"
+      },
+      {
+        "class": "bread",
+        "weight_estimate": "100g"
+      },
+      {
+        "class": "cheese cake",
+        "weight_estimate": "200g"
+      }
+    ]
+  }
+]

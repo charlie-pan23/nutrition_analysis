@@ -32,6 +32,7 @@ def upload_json_file(info, user):
 
 
 def run_workflow_and_extract(file_id, user):
+    print("file_id "+file_id)
     workflow_url = "https://api.dify.ai/v1/workflows/run"
     headers = {
         "Authorization": "Bearer app-RPeZwxLBCbapZdwaNJTj6cOg",
@@ -40,7 +41,7 @@ def run_workflow_and_extract(file_id, user):
 
     data = {
         "inputs": {
-            "a": [{
+            "input": [{
                 "transfer_method": "local_file",
                 "upload_file_id": file_id,
                 "type": "custom"
@@ -69,41 +70,40 @@ def run_workflow_and_extract(file_id, user):
         print(f"Workflow error: {str(e)}")
         return None, None
 
-# === Run ===
-if __name__ == "__main__":
+def test():
     file_path = {
-      "personal_info": {
-        "height_cm": 175,
-        "weight_kg": 68,
-        "age": 30,
-        "gender": "male",
-        "preferences": ["low-carb", "high-protein"],
-        "allergies": ["peanuts", "shellfish"],
-        "chronic_conditions": ["hypertension"],
-        "activity_level": "moderate"
-      },
-      "food_item": {
-        "name": "tomato",
-        "weight_g": 150,
-        "energy_kcal": 27,
-        "carbohydrates_g": 5.85,
-        "fat_g": 0.3,
-        "protein_g": 1.35
-      },
-      "current_time": "2025-07-14T14:43:04+08:00",
-      "meal_type": "lunch",
-      "daily_goals": {
-        "energy_kcal": 2200,
-        "carbohydrates_g": 250,
-        "fat_g": 70,
-        "protein_g": 150
-      },
-      "daily_intake": {
-        "energy_kcal": 980,
-        "carbohydrates_g": 105,
-        "fat_g": 32,
-        "protein_g": 65
-      }
+        "personal_info": {
+            "height_cm": 175,
+            "weight_kg": 68,
+            "age": 30,
+            "gender": "male",
+            "preferences": ["low-carb", "high-protein"],
+            "allergies": ["peanuts", "shellfish"],
+            "chronic_conditions": ["hypertension"],
+            "activity_level": "moderate"
+        },
+        "food_item": {
+            "name": "tomato",
+            "weight_g": 150,
+            "energy_kcal": 27,
+            "carbohydrates_g": 5.85,
+            "fat_g": 0.3,
+            "protein_g": 1.35
+        },
+        "current_time": "2025-08-20T14:43:04+08:00",
+        "meal_type": "lunch",
+        "daily_goals": {
+            "energy_kcal": 2200,
+            "carbohydrates_g": 250,
+            "fat_g": 70,
+            "protein_g": 150
+        },
+        "daily_intake": {
+            "energy_kcal": 980,
+            "carbohydrates_g": 105,
+            "fat_g": 32,
+            "protein_g": 65
+        }
     }
     # Replace with your actual file path
     user = "difyuser"
@@ -113,5 +113,11 @@ if __name__ == "__main__":
         doctor, food = run_workflow_and_extract(file_id, user)
         print("\n=== DOCTOR ===\n", doctor)
         print("\n=== FOOD ===\n", food)
+        return doctor, food
     else:
         print("Upload failed. Cannot proceed to workflow.")
+        return None, None
+
+# === Run ===
+if __name__ == "__main__":
+    test()

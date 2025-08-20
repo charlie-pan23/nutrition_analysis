@@ -22,48 +22,52 @@
           <view class="item">
             <text>体重</text>
             <view class="start">
-              <text style="margin-right: 20rpx">{{ user.weight }}千克</text>
+              <picker @change="bindWeightChange" :value="user.weight-1" :range="weightList"
+                      style="margin-right: 10rpx">
+                <view class="uni-input">{{ user.weight }}</view>
+              </picker>
+              公斤
               <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
             </view>
           </view>
           <view class="item">
             <text>身高</text>
             <view class="start">
-              <picker @change="bindPickerChange" :value="index" :range="heightList" style="margin-right: 10rpx">
-                <view class="uni-input">{{user.height}}</view>
-              </picker>厘米
+              <picker @change="bindHeightChange" :value="user.height-100" :range="heightList"
+                      style="margin-right: 10rpx">
+                <view class="uni-input">{{ user.height }}</view>
+              </picker>
+              厘米
               <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
             </view>
-
           </view>
-          <view class="item">
+          <view class="item" @click="onMultiplePick('preferences')">
             <text>偏好</text>
             <view class="start">
               <text style="margin-right: 20rpx">{{ user.preferences }}</text>
+              <multiple-pick ref="preferencesRef" :list="preferencesPickList" disabled-key="disabled"
+                             disabled-value="1" :defaults="[]" @confirm="onMultiplePickConfirm"
+                             :max="10" max-message="已超出最大选项"></multiple-pick>
               <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
             </view>
           </view>
-          <view class="item" @click="showActionSheet('diseases')">
+          <view class="item" @click="onMultiplePick('diseases')">
             <text>慢性病</text>
             <view class="start">
               <text style="margin-right: 20rpx">{{ user.diseases }}</text>
-              <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
-            </view>
-          </view>
-          <view class="item" @click="showActionSheet('allergies')">
-            <text>过敏源</text>
-            <view class="start">
-              <text style="margin-right: 20rpx">{{ user.allergies }}</text>
-              <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
-            </view>
-          </view>
-          <view class="item" @click="onMultiplePick">
-            <text>过敏源</text>
-            <view class="start">
-              <text style="margin-right: 20rpx">{{ user.allergies }}</text>
-              <multiple-pick ref="allergiesPickRef" :list="allergiesPickList" disabled-key="disabled"
+              <multiple-pick ref="diseasesRef" :list="diseasesPickList" disabled-key="disabled"
                              disabled-value="1" :defaults="[]" @confirm="onMultiplePickConfirm"
-                             :max="2" max-message="已超出最大选项"></multiple-pick>
+                             :max="10" max-message="已超出最大选项"></multiple-pick>
+              <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
+            </view>
+          </view>
+          <view class="item" @click="onMultiplePick('allergies')">
+            <text>过敏源</text>
+            <view class="start">
+              <text style="margin-right: 20rpx">{{ user.allergies }}</text>
+              <multiple-pick ref="allergiesRef" :list="allergiesPickList" disabled-key="disabled"
+                             disabled-value="1" :defaults="[]" @confirm="onMultiplePickConfirm"
+                             :max="10" max-message="已超出最大选项"></multiple-pick>
               <up-icon color="#444444" name="arrow-right" size="20"></up-icon>
             </view>
           </view>
@@ -82,6 +86,7 @@ import {getUser} from "@/utils/store";
 import http from "@/utils/http";
 import MultiplePick from "@/components/multiple-pick.vue";
 
+const {proxy} = getCurrentInstance()
 const sysHeight = computed(() => {
   const info = uni.getStorageSync('systemInfo')
   let statusBarHeight = info.statusBarHeight * info.proportion
@@ -102,35 +107,54 @@ const user = ref({
   diseases: 'Empty'
 })
 
-const allergiesPickList= ref(['海鲜', '牛奶', '鸡蛋','花生','坚果','大豆'])
-
+const allergiesPickList = ref(['海鲜', '牛奶', '鸡蛋', '花生', '坚果', '大豆'])
+const diseasesPickList = ref(['高血压', '糖尿病', '心脏病', '高血脂', '高尿酸'])
+const preferencesPickList = ref(['蔬菜', '肉类', '水果', '鱼类', '主食', '素食', '辣口', '咸口'])
 onMounted(() => {
   user.value = getUser()
 })
-const allergiesPickRef= ref();
-const onMultiplePick = ()  =>{
-  allergiesPickRef.value.show();
+const multiplePickType = ref();
+const onMultiplePick = (type) => {
+  proxy.$refs[type + 'Ref'].show();
+  multiplePickType.value = type
 }
 
-const onMultiplePickConfirm = (selectedList)  =>{
+const onMultiplePickConfirm = async (selectedList) => {
   console.log(selectedList);
-
-  allergiesPickRef.value.close();
+  let value = ''
+  if (selectedList.length > 0) {
+    value = selectedList.join(',')
+  }
+  await saveUserInfo(multiplePickType.value, value);
+  proxy.$refs[multiplePickType.value + 'Ref'].close();
 }
 
 
+const weightList = Array.from({length: 200}, (_, i) => i + 1);
+
+const heightList = Array.from({length: 100}).map((_, i) => i + 100);
+
+const bindHeightChange = async (val) => {
+  await saveUserInfo('height', Number(val.detail.value) + 100);
+}
+
+const bindWeightChange = async (val) => {
+  await saveUserInfo('weight', Number(val.detail.value) + 1);
+}
+
+
+async function saveUserInfo(type, val) {
+  const data = {}
+  data[type] = val
+  // 更新用户信息
+  const resData = await http.put('/users/' + user.value.openid, data)
+  user.value = resData
+  uni.setStorageSync('user', resData)
+}
 
 const showActionSheet = (type) => {
-
   let itemList = []
-
   switch (type) {
-    case 'allergies':
-      itemList = ['海鲜', '牛奶', '鸡蛋','花生','坚果','大豆']
-      break;
-    case 'diseases':
-      itemList = ['高血压', '糖尿病', '心脏病','高血脂','高尿酸']
-      break;
     case 'height':
       itemList = heightList
       break;
@@ -141,10 +165,10 @@ const showActionSheet = (type) => {
 
   uni.showActionSheet({
     itemList: itemList,
-    success: function (res) {
+    success: async function (res) {
       console.log('用户选择了第' + res.tapIndex + '个选项');
       console.log(itemList[res.tapIndex])
-      user.value[type] = itemList[res.tapIndex]
+      await saveUserInfo(type.value, itemList[res.tapIndex]);
 
     },
     fail: function (res) {

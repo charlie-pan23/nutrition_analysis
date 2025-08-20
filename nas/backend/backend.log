@@ -1,0 +1,38 @@
+2025-07-16 22:35:51,193 - INFO - CameraService initialized with server_ip: 172.20.10.3, camera_index: 0
+2025-07-16 22:35:51,194 - INFO - 启动CameraService...
+2025-07-16 22:35:51,203 - INFO - 摄像头捕获和处理线程已启动。
+2025-07-16 22:35:51,204 - INFO - ✨ YOLO服务器URL已设置为: http://172.20.10.3:5000/process_frame
+2025-07-16 22:35:51,206 - INFO - 正在尝试打开摄像头 (索引: 0)...
+2025-07-16 22:35:51,205 - INFO - CameraService 线程已启动。
+[ WARN:0@1.794] global cap_v4l.cpp:913 open VIDEOIO(V4L2:/dev/video0): can't open camera by index
+[ WARN:0@1.794] global cap.cpp:478 open VIDEOIO(V4L2): backend is generally available but can't be used to capture by index
+2025-07-16 22:35:51,224 - ERROR - 无法打开摄像头 0。请检查摄像头是否连接正确或是否被其他程序占用。
+/home/thy/workspace/nas/backend/hx711.py:17: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
+  GPIO.setup(self.PD_SCK, GPIO.OUT)
+2025-07-16 22:35:53,234 - INFO - 正在尝试打开摄像头 (索引: 0)...
+[ WARN:0@3.828] global cap_v4l.cpp:913 open VIDEOIO(V4L2:/dev/video0): can't open camera by index
+[ WARN:0@3.830] global cap.cpp:478 open VIDEOIO(V4L2): backend is generally available but can't be used to capture by index
+2025-07-16 22:35:53,259 - ERROR - 无法打开摄像头 0。请检查摄像头是否连接正确或是否被其他程序占用。
+2025-07-16 22:35:54,408 - INFO - 启动树莓派上的Flask应用...
+正在启动称重服务并初始化HX711...
+HX711初始化完成并已去皮！现在可以放置物体进行称重...
+ * Serving Flask app 'app'
+ * Debug mode: off
+Address already in use
+Port 5000 is in use by another program. Either identify and stop that program, or start the server with a different port.
+2025-07-16 22:35:54,415 - INFO - Flask 应用关闭，正在停止所有service...
+2025-07-16 22:35:55,282 - INFO - 摄像头捕获和处理线程已停止。
+2025-07-16 22:35:55,283 - INFO - CameraService 线程停止请求已发送。
+应用关闭，释放资源...
+正在停止称重服务并清理GPIO...
+HX711模块已断电。
+GPIO已清理。
+/home/thy/workspace/nas/backend/services/scale_service.py:81: RuntimeWarning: No channels have been set up yet - nothing to clean up!  Try cleaning up at the end of your program instead!
+  GPIO.cleanup() # 清理所有GPIO引脚
+/home/thy/workspace/nas/backend/services/scale_service.py:136: RuntimeWarning: No channels have been set up yet - nothing to clean up!  Try cleaning up at the end of your program instead!
+  GPIO.cleanup()
+应用关闭，释放资源...
+称重服务未运行或未初始化，无需停止。
+正在停止称重服务并清理GPIO...
+GPIO已清理。
+GPIO引脚在模块退出时已确保清理。

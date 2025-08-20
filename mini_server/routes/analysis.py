@@ -7,7 +7,7 @@ from mini_server.service.food_service import get_food_by_name
 from mini_server.service.meal_record_service import get_daily_nutrition_summary
 from mini_server.service.meal_type_service import get_current_meal_type, get_name_by_time
 from mini_server.service.user_service import get_user_by_openid
-from mini_server.util.api import upload_json_file, run_workflow_and_extract
+from mini_server.util.api import upload_json_file, run_workflow_and_extract,test
 from mini_server.vo.user_daily_info import PersonalInfo, FoodItem, DailyGoals, DailyIntake, DailyInfo, ComplexEncoder
 
 analysis_bp = Blueprint('analysis', __name__, url_prefix='/analysis')
@@ -61,6 +61,7 @@ def analysis():
     print(detections)
 
     if not detections:
+        print("No detections")
         return jsonify({"code": 400, "msg": "暂无数据"})
 
     class_name = detections[0]["class_name"]
@@ -82,16 +83,26 @@ def analysis():
 
     user = "difyuser"
 
+    print("=======333========")
+    print(daily_info)
     file_id = upload_json_file(daily_info, user)
     if file_id:
         doctor, food = run_workflow_and_extract(file_id, user)
         print("\n=== DOCTOR ===\n", doctor)
         print("\n=== FOOD ===\n", food)
+        if (doctor and food)!=True:
+            return jsonify({"code": 400, "message": "分析出错"})
         return jsonify({"data": {"doctor": doctor, "food": food}, "code": 200})
 
+
+    print("分析出错")
     return jsonify({"code": 400, "message": "分析出错"})
 
 
 @analysis_bp.route('/test', methods=['GET'])
 def test():
-    return jsonify({"code": 200, "message": "分析成功"})
+    doctor, food = test()
+    if (doctor and food)!=True:
+        return jsonify({"code": 400, "message": "分析为空"})
+    # return jsonify({"code": 200, "message": "分析成功"})
+    return jsonify({"data": {"doctor": doctor, "food": food}, "code": 200})

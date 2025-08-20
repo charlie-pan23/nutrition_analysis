@@ -12,7 +12,8 @@
             <view>
               {{ keyName ? item[keyName] : item }}
             </view>
-            <u-icon v-if="isSelected(item)" name="checkmark" :color="isDisabled(item) ? '#959595' : '#2979ff'"size="18">
+            <u-icon v-if="isSelected(item)" name="checkmark" :color="isDisabled(item) ? '#959595' : '#2979ff'"
+                    size="18">
             </u-icon>
           </view>
         </view>

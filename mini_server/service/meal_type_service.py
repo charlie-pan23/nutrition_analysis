@@ -72,7 +72,7 @@ def get_name_by_time(target_time_str):
 
         return {"name": "加餐", "id": 5}
     except Exception as e:
-        logger.error(f"通过时间获取名称失败: {e}")
+        logger.error(f"通过时间获取名称失败: {e}, 加餐")
         return {"name": "加餐", "id": 5}
 
 
